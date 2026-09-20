@@ -1,0 +1,55 @@
+generated: '2026-09-19'
+method: searched
+source: https://webcrawlerapi.com/docs/access-key + openapi/_original/webcrawlerapi-com-swagger.json (securityDefinitions.ApiKeyAuth)
+  + live unauthenticated 401 from api.webcrawlerapi.com observed 2026-09-19 + changelog 2026-03-29 (multiple API
+  keys)
+docs: https://webcrawlerapi.com/docs/access-key
+summary:
+  types:
+  - apiKey
+  api_key_in:
+  - header
+  style: Bearer token carrying a static API key
+  oauth2: false
+  openid_connect: false
+  mutual_tls: false
+schemes:
+- name: ApiKeyAuth
+  type: apiKey
+  in: header
+  parameter: Authorization
+  format: Bearer {api_key}
+  description: 'Docs: "Webcrawler API uses Bearer Token authentication scheme. You need to include the API key in
+    the Authorization header" - Authorization: Bearer <API key>. The Swagger document models this as an apiKey scheme
+    named Authorization with description "API key for authentication. Format: Bearer {api_key}" rather than as http/bearer;
+    the wire format is identical. Applied per operation on 23 of 24 operations; GET /ping is anonymous.'
+  obtain: Sign up at https://dash.webcrawlerapi.com/sign-up (no credit card), then copy a key from https://dash.webcrawlerapi.com/access.
+  key_management:
+    keys_per_organization: 20
+    named_keys: true
+    default_key: true
+    individual_revocation: true
+    regenerate: at any time from the dashboard
+    source: https://webcrawlerapi.com/changelog/2026-03-29-multiple-api-keys
+  admin_key:
+    required_for:
+    - GET /v2/organization/usage
+    source: https://webcrawlerapi.com/docs/api/organization/usage
+    note: The usage endpoint docs call for an "admin API key"; the spec declares the same ApiKeyAuth scheme with
+      no scope distinction.
+  failure:
+    status: 401
+    body: '{"error":"Unauthorized","message":"No Authorization header. Read the docs: https://webcrawlerapi.com/docs/access-key"}'
+    observed: 2026-09-19 on POST /v1/crawl without a header
+    docs_example: '{"error": "Unauthorized"}'
+  sdk_env_vars:
+    mcp_server: WEBCRAWLER_API_KEY
+    claude_code_skill: WEBCRAWLERAPI_API_KEY
+    cli: stored via `webcr auth set`
+  sources:
+  - https://webcrawlerapi.com/docs/access-key
+  - openapi/webcrawlerapi-com-openapi.yml
+scopes: null
+scopes_note: No OAuth, no scopes; the only privilege distinction documented is the admin key for usage statistics.
+guidance: Keep the key server-side (docs warn against client-side code and public repos). Content URLs on data.webcrawlerapi.com
+  returned inside job items are fetched WITHOUT the key.

@@ -1,0 +1,169 @@
+generated: '2026-09-19'
+method: searched
+source: 'https://webcrawlerapi.com/docs (SDK pages) + https://github.com/WebCrawlerAPI (16 repos) + registry metadata
+  endpoints: registry.npmjs.org, pypi.org/pypi/*/json, api.nuget.org, repo.packagist.org, search.maven.org, proxy.golang.org
+  (all read 2026-09-19)'
+summary:
+  first_party_sdk_count: 5
+  first_party_package_count: 9
+  note: Five first-party client SDKs (JavaScript/TypeScript, Python, PHP, .NET, Java) plus a LangChain integration,
+    an n8n community node, the MCP server package and the webcr CLI. Every package is published by the WebCrawlerAPI
+    GitHub organization; npm author is sdk@webcrawlerapi.com / support@webcrawlerapi.com and the single npm maintainer
+    (niiotyo) publishes all four npm packages. JS and Python SDKs were released the same day (2026-08-13) and track
+    the API closely; the .NET SDK has not been released since 2025-04-11 and predates output_formats, feeds, the
+    agent and caching.
+github_organization:
+  found: true
+  url: https://github.com/WebCrawlerAPI
+  public_repos: 16
+  email: hey@webcrawlerapi.com
+  created: '2023-05-28'
+  checked: '2026-09-19'
+packages:
+- language: javascript
+  registry: npm
+  name: webcrawlerapi-js
+  url: https://www.npmjs.com/package/webcrawlerapi-js
+  install: npm i webcrawlerapi-js
+  official: true
+  version: 2.2.2
+  published: '2026-08-13'
+  repository: https://github.com/WebCrawlerAPI/webcrawlerapi-js-sdk
+  docs: https://webcrawlerapi.com/docs/sdk/js
+  author: WebcrawlerAPI <sdk@webcrawlerapi.com>
+  source: https://registry.npmjs.org/webcrawlerapi-js
+  note: TypeScript, zero runtime dependencies, native fetch; covers crawl (v1) and scrape (v2) with built-in polling
+    and getContent().
+- language: python
+  registry: pypi
+  name: webcrawlerapi
+  url: https://pypi.org/project/webcrawlerapi/
+  install: pip install webcrawlerapi
+  official: true
+  version: 2.1.3
+  published: '2026-08-13'
+  repository: https://github.com/WebCrawlerAPI/webcrawlerapi-python-sdk
+  docs: https://webcrawlerapi.com/docs/sdk/python
+  source: https://pypi.org/pypi/webcrawlerapi/json
+  note: crawl / crawl_async / get_job / scrape; honours recommended_pull_delay_ms when polling.
+- language: php
+  registry: packagist
+  name: webcrawlerapi/sdk
+  url: https://packagist.org/packages/webcrawlerapi/sdk
+  install: composer require webcrawlerapi/sdk
+  official: true
+  version: 1.1.0
+  published: '2026-04-14'
+  repository: https://github.com/WebCrawlerAPI/webcrawlerapi-php-sdk
+  docs: https://webcrawlerapi.com/docs/sdk/php
+  source: https://repo.packagist.org/p2/webcrawlerapi/sdk.json
+  note: PHP 8.1+, Guzzle 7.
+- language: csharp
+  registry: nuget
+  name: WebCrawlerApi
+  url: https://www.nuget.org/packages/WebCrawlerApi
+  install: dotnet add package WebCrawlerApi
+  official: true
+  version: 1.0.2
+  published: '2025-04-11'
+  repository: https://github.com/WebCrawlerAPI/webcrawlerapi-dotnet-sdk
+  docs: https://webcrawlerapi.com/docs/sdk/dotnet
+  source: https://api.nuget.org/v3/registration5-semver1/webcrawlerapi/index.json
+  note: .NET 7+. Last release 2025-04-11 - before output_formats (2026-04), feeds (2025-12), the crawling agent
+    (2026-06) and max_age caching shipped; its scrapeType parameter is the legacy single-format shape. The strongest
+    staleness signal in this SDK set.
+- language: java
+  registry: null
+  name: WebCrawlerAPI.java
+  url: https://github.com/WebCrawlerAPI/java-sdk
+  install: curl -O https://raw.githubusercontent.com/WebCrawlerAPI/java-sdk/main/WebCrawlerAPI.java
+  official: true
+  version: null
+  published: null
+  repository: https://github.com/WebCrawlerAPI/java-sdk
+  docs: https://webcrawlerapi.com/docs/sdk/java
+  source: https://webcrawlerapi.com/docs/sdk/java
+  note: 'Deliberately NOT on Maven Central (search.maven.org returns nothing for webcrawlerapi): the docs distribute
+    a single dependency-free .java file to copy into a project (Java 17+). No registry means no version or release
+    date to read; the repo was last pushed 2026-04-17.'
+- language: python
+  registry: pypi
+  name: webcrawlerapi-langchain
+  url: https://pypi.org/project/webcrawlerapi-langchain/
+  install: pip install webcrawlerapi-langchain
+  official: true
+  version: 0.1.1
+  published: '2025-05-19'
+  repository: https://github.com/WebCrawlerAPI/webcrawlerapi-langchain
+  docs: https://webcrawlerapi.com/docs/sdk/langchain
+  source: https://pypi.org/pypi/webcrawlerapi-langchain/json
+  kind: integration
+  note: LangChain document loader wrapping the Python SDK; author WebCrawlerAPI <support@webcrawlerapi.com>.
+- language: javascript
+  registry: npm
+  name: n8n-nodes-webcrawlerapi
+  url: https://www.npmjs.com/package/n8n-nodes-webcrawlerapi
+  install: 'n8n community node: n8n-nodes-webcrawlerapi'
+  official: true
+  version: 0.3.9
+  published: '2026-09-06'
+  repository: https://github.com/WebCrawlerAPI/n8n-node-webcrawlerapi
+  docs: https://webcrawlerapi.com/docs/sdk/n8n
+  source: https://registry.npmjs.org/n8n-nodes-webcrawlerapi
+  kind: integration
+  note: Most recently released first-party package.
+- language: javascript
+  registry: npm
+  name: webcrawler-mcp
+  url: https://www.npmjs.com/package/webcrawler-mcp
+  install: npx -y webcrawler-mcp
+  official: true
+  version: 1.0.0
+  published: '2025-07-19'
+  repository: https://github.com/WebCrawlerAPI/webcrawlerapi-mcp
+  docs: https://webcrawlerapi.com/docs/sdk/mcp
+  source: https://registry.npmjs.org/webcrawler-mcp
+  kind: mcp-server
+  note: 'See mcp/webcrawlerapi-com-mcp.yml. bin: webcrawler-mcp.'
+- language: javascript
+  registry: homebrew-tap
+  name: webcr
+  url: https://github.com/WebCrawlerAPI/homebrew-webcrawlerapi
+  install: brew tap webcrawlerapi/webcrawlerapi && brew install webcr
+  official: true
+  version: 0.1.3
+  published: null
+  repository: https://github.com/WebCrawlerAPI/webcr
+  source: https://raw.githubusercontent.com/WebCrawlerAPI/homebrew-webcrawlerapi/master/Formula/webcr.rb
+  kind: cli
+  note: Version read from the formula url (archive/refs/tags/v0.1.3.tar.gz). No registry metadata endpoint exists
+    for a tap and the GitHub tags API was rate-limited during this pass, so the release date is unrecorded rather
+    than guessed. NOT on npm (registry.npmjs.org/webcr -> Not found) despite the package.json; the repo's own package.json
+    still says 0.1.1 while the formula ships 0.1.3. See cli/webcrawlerapi-com-cli.yml.
+negative_probes:
+- registry: npm
+  names:
+  - webcrawlerapi
+  - '@webcrawlerapi/mcp'
+  - webcr
+  result: Not found
+- registry: pypi
+  names:
+  - webcrawlerapi-mcp
+  result: '404'
+- registry: maven-central
+  query: webcrawlerapi
+  result: 0 artifacts
+- registry: pkg.go.dev
+  names:
+  - github.com/webcrawlerapi/webcrawlerapi-go
+  result: 404 - no Go SDK
+- registry: rubygems / crates.io
+  result: not probed by name; no Ruby or Rust SDK is documented or present in the GitHub org
+other_first_party_repos:
+- webcrawlerapi-examples (Java examples)
+- scraping-browser-extension (Chrome extension "Page to Markdown", client-side, no API key)
+- crawl-search-results (TypeScript CLI, search results to markdown)
+- crawl-lab (crawler test-bed site)
+- skills (Claude Code Agent Skill - saved under skills/)
+- ckb (internal mini knowledge-base CLI)

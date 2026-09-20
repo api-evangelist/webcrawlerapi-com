@@ -1,0 +1,107 @@
+generated: '2026-09-19'
+method: searched
+source: https://webcrawlerapi.com/#pricing + https://webcrawlerapi.com/docs/pricing
+checked: '2026-09-19'
+summary: 'Four self-serve tiers priced publicly in USD: a $0/month pay-as-you-go tier and three monthly subscriptions
+  ($29 / $99 / $499) that lower the per-page rate and raise the parallel-request ceiling. Usage is metered per successfully
+  crawled page; agent runs and prompt-based scrapes add a per-LLM-token charge; cache hits are free (since 2026-09-02).
+  No credit card is needed to start and the first run is free. A custom plan is offered by contact.'
+plan_count: 4
+prices_published: true
+currency: USD
+billing_period: monthly
+public_signup_pricing: true
+free_tier: true
+trial:
+  offered: true
+  terms: No credit card required; first run free (agent page); "Try for free" on subscription tiers.
+metering:
+  unit: crawled page
+  charged_on: successful requests only
+  duplicate_items: refunded automatically
+  cache_hits: free
+  agent_runs: per LLM token consumed + per page visited; capped per run by the required max_spend_usd
+  prompt_scrapes: routed to the agent and billed like agent runs (docs) / $0.002 per structured-output request on
+    top of crawl cost (changelog 2026-01-23)
+  special_sites: TikTok, LinkedIn public pages and some others priced separately (exact rates in the dashboard billing
+    page)
+  credits: 1 USD = 1,000,000 credits (balance endpoint docs)
+plans:
+- name: Pay as you go
+  price: 0
+  currency: USD
+  billing_period: month
+  per_page_price: 0.002
+  included_quota: null
+  overage: per page at the stated rate via prepaid top-up
+  limits:
+    parallel_requests: 5
+  features:
+  - Unlimited proxy included
+  - Pay only for successful requests
+  - Content cleaning included
+  - Webcrawler agent
+  cta: Get started
+- name: Starter
+  price: 29
+  currency: USD
+  billing_period: month
+  per_page_price: 0.002
+  included_quota: included monthly credits (amount not published on the page)
+  overage: top-up credits at the plan's per-page rate
+  limits:
+    parallel_requests: 10
+  features:
+  - Unlimited proxy included
+  - Pay only for successful requests
+  - Content cleaning included
+  - Webcrawler agent
+  cta: Try for free
+- name: Professional
+  price: 99
+  currency: USD
+  billing_period: month
+  per_page_price: 0.0015
+  included_quota: included monthly credits (amount not published on the page)
+  overage: top-up credits at the plan's per-page rate
+  limits:
+    parallel_requests: 20
+  features:
+  - Unlimited proxy included
+  - Pay only for successful requests
+  - Content cleaning included
+  - Webcrawler agent
+  discount_label: Save 25%
+  cta: Try for free
+- name: Business
+  price: 499
+  currency: USD
+  billing_period: month
+  per_page_price: 0.001
+  included_quota: included monthly credits (amount not published on the page)
+  overage: top-up credits at the plan's per-page rate
+  limits:
+    parallel_requests: 50
+  features:
+  - Unlimited proxy included
+  - Pay only for successful requests
+  - Content cleaning included
+  - Webcrawler agent
+  discount_label: Save 50%
+  cta: Try for free
+custom:
+  offered: true
+  text: Need a custom quota or special pricing? Contact us and we'll set up a plan that fits your needs.
+agent_cost_guide:
+  simple_landing_page_tokens_usd: 0.004-0.005
+  large_article_tokens_usd: 0.01-0.02
+  worked_example: 'Professional plan blog post: $0.006 tokens + $0.0015 page = $0.0075'
+  source: https://webcrawlerapi.com/docs/pricing
+refund_policy:
+  url: https://webcrawlerapi.com/refund
+  window: 30 days of the charge
+  subscriptions: prorated for unused days; annual pro-rata by full months
+  top_ups: unused credits refunded
+  processing: within 7 business days
+note: The pricing page states included subscription credits exist but does not print the credit amount per tier;
+  the docs pricing page prints only the per-page rate. Neither is invented here.

@@ -1,0 +1,95 @@
+generated: '2026-09-19'
+method: derived
+source: mcp/webcrawlerapi-com-mcp.yml (tool + inputSchema from src/index.ts) x openapi/webcrawlerapi-com-openapi.yml
+  (24 operations; operationIds assigned by overlays/webcrawlerapi-com-openapi-overlay.yaml because the provider
+  ships none)
+surfaces:
+  openapi:
+    path: openapi/webcrawlerapi-com-openapi.yml
+    original: openapi/_original/webcrawlerapi-com-swagger.json
+    operations: 24
+    gated: false
+  mcp:
+    mode: local-stdio
+    package: webcrawler-mcp
+    tools: 1
+    gated: false
+    note: Schema read from source, not from a live tools/list - there is no remote endpoint to call.
+  graphql: null
+  a2a:
+    card: a2a/webcrawlerapi-com-agent-card.json
+    note: Card declares 3 skills (scrape, crawl, crawling-agent) but no A2A endpoint answers; skills map to REST
+      as noted in a2a/.
+operation_id_note: operationIds below are API Evangelist overlay names; the method+path is the provider's own identifier.
+crosswalk:
+- tool: webcrawler-scrape
+  category: scrape
+  rest:
+  - createScrapeV2
+  rest_paths:
+  - POST /v2/scrape
+  binding: direct
+  confidence: high
+  note: 'src/index.ts POSTs {url, prompt?, main_content_only?} to https://api.webcrawlerapi.com/v2/scrape and returns
+    markdown/page_title/page_status_code (or structured_data when a prompt is set). The tool exposes 3 of the 9
+    PostScrapeRequestV2 fields: output_formats, output_format, clean_selectors, respect_robots_txt, max_age and
+    response_schema are not reachable through MCP. The tool inherits the operation''s real inputSchema for the fields
+    it does expose.'
+mcp_only: []
+rest_only:
+- operationId: ping
+  path: GET /ping
+- operationId: runAgent
+  path: POST /v1/agent
+- operationId: getAgentJob
+  path: GET /v1/agent/job/{id}
+- operationId: listAgentJobs
+  path: GET /v1/agent/jobs
+- operationId: checkAuth
+  path: GET /v1/auth
+- operationId: createCrawlJob
+  path: POST /v1/crawl
+- operationId: getJob
+  path: GET /v1/job/{id}
+- operationId: cancelJob
+  path: PUT /v1/job/{id}/cancel
+- operationId: getJobMarkdown
+  path: GET /v1/job/{id}/markdown
+- operationId: getJobUrls
+  path: GET /v1/job/{id}/urls
+- operationId: resendJobWebhook
+  path: POST /v1/job/{id}/webhook/resend
+- operationId: createFeed
+  path: POST /v2/feed
+- operationId: getFeed
+  path: GET /v2/feed/{id}
+- operationId: deleteFeed
+  path: DELETE /v2/feed/{id}
+- operationId: getFeedJson
+  path: GET /v2/feed/{id}/json
+- operationId: pauseFeed
+  path: PUT /v2/feed/{id}/pause
+- operationId: resumeFeed
+  path: PUT /v2/feed/{id}/resume
+- operationId: getFeedRss
+  path: GET /v2/feed/{id}/rss
+- operationId: runFeed
+  path: PUT /v2/feed/{id}/run
+- operationId: resendFeedWebhook
+  path: POST /v2/feed/{id}/webhook/resend
+- operationId: listFeeds
+  path: GET /v2/feeds
+- operationId: getOrganizationUsage
+  path: GET /v2/organization/usage
+- operationId: getScrapeV2
+  path: GET /v2/scrape/{id}
+coverage:
+  mcp_tools: 1
+  rest_operations: 24
+  rest_operations_with_tool: 1
+  rest_only: 23
+  mcp_only: 0
+  percent_rest_covered: 4.2
+gap: An agent on the MCP surface can scrape one page at a time but cannot start a crawl job, read job results, create
+  or read a feed, run the crawling agent, or check balance/usage. The provider's own Claude Code skill (skills/webcrawlerapi-com-webcrawlerapi.md)
+  and the webcr CLI (cli/) are how the crawl surface reaches agents today.

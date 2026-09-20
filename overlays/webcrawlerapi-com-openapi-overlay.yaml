@@ -1,0 +1,160 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist overlay for the WebCrawler API
+  version: 1.0.0
+extends: openapi/webcrawlerapi-com-openapi.yml
+x-generated: '2026-09-19'
+x-method: generated
+x-source: openapi/_original/webcrawlerapi-com-swagger.json + https://webcrawlerapi.com/docs
+x-rationale: The provider's Swagger 2.0 document (https://api.webcrawlerapi.com/swagger/doc.json, 24 operations)
+  ships no operationIds, no tag declarations and no root security requirement, and the docs pages that explain each
+  operation are not linked from it. This overlay adds stable operationIds (API Evangelist naming, used by mcp/,
+  skills/ and conventions/ in this repo), tag declarations, externalDocs links to the provider's own reference pages,
+  and the documented Bearer requirement - without mutating the original.
+actions:
+- target: $.info
+  description: Point readers at the human docs and the live Swagger UI.
+  update:
+    x-api-evangelist-docs: https://webcrawlerapi.com/docs/getting-started
+    x-api-evangelist-swagger-ui: https://api.webcrawlerapi.com/swagger/index.html
+- target: $
+  description: Declare the tags the operations already use (the source declares none).
+  update:
+    tags:
+    - name: Status
+      description: Health and authentication checks.
+    - name: Jobs
+      description: Multi-page crawl jobs (asynchronous; poll or webhook).
+    - name: V2 Scraping
+      description: Single-page scrape, synchronous by default or async with ?async=true.
+    - name: Feeds
+      description: Scheduled change-detection feeds delivered as Atom 1.0, JSON Feed 1.1 or webhooks.
+    - name: Agent
+      description: Autonomous crawling agent (Wagent) runs driven by a natural-language prompt.
+    - name: Organization
+      description: Organization usage and billing.
+- target: $
+  description: Apply the documented Bearer API-key requirement at the root; /ping is the only anonymous operation.
+  update:
+    security:
+    - ApiKeyAuth: []
+- target: $.paths['/ping'].get
+  description: /ping answers anonymously ({"message":"pong"}, probed 2026-09-19).
+  update:
+    security: []
+- target: $.paths['/ping'].get
+  update:
+    operationId: ping
+- target: $.paths['/v1/agent'].post
+  update:
+    operationId: runAgent
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/agent/agent-run
+- target: $.paths['/v1/agent/job/{id}'].get
+  update:
+    operationId: getAgentJob
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/agent/agent-job
+- target: $.paths['/v1/agent/jobs'].get
+  update:
+    operationId: listAgentJobs
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/agent/agent-jobs
+- target: $.paths['/v1/auth'].get
+  update:
+    operationId: checkAuth
+- target: $.paths['/v1/crawl'].post
+  update:
+    operationId: createCrawlJob
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/crawl
+- target: $.paths['/v1/job/{id}'].get
+  update:
+    operationId: getJob
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/job
+- target: $.paths['/v1/job/{id}/cancel'].put
+  update:
+    operationId: cancelJob
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/cancel
+- target: $.paths['/v1/job/{id}/markdown'].get
+  update:
+    operationId: getJobMarkdown
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/markdown
+- target: $.paths['/v1/job/{id}/urls'].get
+  update:
+    operationId: getJobUrls
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/urls
+- target: $.paths['/v1/job/{id}/webhook/resend'].post
+  update:
+    operationId: resendJobWebhook
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/async-requests
+- target: $.paths['/v2/feed'].post
+  update:
+    operationId: createFeed
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/feed/feed-create
+- target: $.paths['/v2/feed/{id}'].get
+  update:
+    operationId: getFeed
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/feed/feed-get
+- target: $.paths['/v2/feed/{id}'].delete
+  update:
+    operationId: deleteFeed
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/feed/feed-get
+- target: $.paths['/v2/feed/{id}/json'].get
+  update:
+    operationId: getFeedJson
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/feed/feed-json
+- target: $.paths['/v2/feed/{id}/pause'].put
+  update:
+    operationId: pauseFeed
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/feed/feed-manage
+- target: $.paths['/v2/feed/{id}/resume'].put
+  update:
+    operationId: resumeFeed
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/feed/feed-manage
+- target: $.paths['/v2/feed/{id}/rss'].get
+  update:
+    operationId: getFeedRss
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/feed/feed-rss
+- target: $.paths['/v2/feed/{id}/run'].put
+  update:
+    operationId: runFeed
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/feed/feed-manage
+- target: $.paths['/v2/feed/{id}/webhook/resend'].post
+  update:
+    operationId: resendFeedWebhook
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/feed/feed-manage
+- target: $.paths['/v2/feeds'].get
+  update:
+    operationId: listFeeds
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/feed/feed-list
+- target: $.paths['/v2/organization/usage'].get
+  update:
+    operationId: getOrganizationUsage
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/organization/usage
+- target: $.paths['/v2/scrape'].post
+  update:
+    operationId: createScrapeV2
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/api/scrape
+- target: $.paths['/v2/scrape/{id}'].get
+  update:
+    operationId: getScrapeV2
+    externalDocs:
+      url: https://webcrawlerapi.com/docs/async-requests

@@ -1,0 +1,62 @@
+generated: '2026-09-19'
+method: searched
+source: One skill saved VERBATIM from the provider (https://github.com/WebCrawlerAPI/skills - webcrawlerapi/SKILL.md,
+  topics claude-skills/skill), plus two API Evangelist skills generated from openapi/_original/webcrawlerapi-com-swagger.json
+  for the surfaces the provider skill does not cover (agent runs, feeds). The provider ships no operationIds; generated
+  skills cite the overlay-assigned names alongside the verbatim method+path.
+skills:
+- file: webcrawlerapi-com-webcrawlerapi.md
+  name: webcrawlerapi
+  method: searched
+  provider_published: true
+  source: https://raw.githubusercontent.com/WebCrawlerAPI/skills/master/webcrawlerapi/SKILL.md
+  api: openapi/webcrawlerapi-com-openapi.yml
+  operations:
+  - createScrapeV2
+  - createCrawlJob
+  - getJob
+  paths:
+  - POST /v2/scrape
+  - POST /v1/crawl
+  - GET /v1/job/{id}
+  note: 'Claude Code skill: decide scrape vs crawl, scrape synchronously, or start a crawl, poll every 10 s and
+    save each markdown_content_url under .webcrawlerapi/<host>/. Uses WEBCRAWLERAPI_API_KEY (the MCP server uses
+    WEBCRAWLER_API_KEY - different variable names).'
+- file: webcrawlerapi-com-run-crawling-agent.md
+  name: Run the WebCrawlerAPI crawling agent
+  method: generated
+  api: openapi/webcrawlerapi-com-openapi.yml
+  operations:
+  - runAgent
+  - getAgentJob
+  - listAgentJobs
+  paths:
+  - POST /v1/agent
+  - GET /v1/agent/job/{id}
+  - GET /v1/agent/jobs
+- file: webcrawlerapi-com-monitor-website-with-feeds.md
+  name: Monitor a website for changes with Feeds
+  method: generated
+  api: openapi/webcrawlerapi-com-openapi.yml
+  operations:
+  - createFeed
+  - getFeed
+  - listFeeds
+  - getFeedRss
+  - getFeedJson
+  - pauseFeed
+  - resumeFeed
+  - runFeed
+  - resendFeedWebhook
+  - deleteFeed
+  paths:
+  - POST /v2/feed
+  - GET /v2/feed/{id}
+  - GET /v2/feeds
+  - GET /v2/feed/{id}/rss
+  - GET /v2/feed/{id}/json
+  - PUT /v2/feed/{id}/pause
+  - PUT /v2/feed/{id}/resume
+  - PUT /v2/feed/{id}/run
+  - POST /v2/feed/{id}/webhook/resend
+  - DELETE /v2/feed/{id}

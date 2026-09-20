@@ -1,0 +1,47 @@
+generated: '2026-09-19'
+method: searched
+source: https://webcrawlerapi.com/docs/async-requests + https://webcrawlerapi.com/docs/api/job + https://webcrawlerapi.com/docs/feeds
+  + POST /v1/job/{id}/webhook/resend and /v2/feed/{id}/webhook/resend in openapi/_original/webcrawlerapi-com-swagger.json
+  + changelog 2025-09-25 (webhook status tracking / resend)
+api: WebCrawler API
+asyncapi_published: false
+summary: Two webhook producers, both configured per resource with a webhook_url field on the create request. Crawl
+  jobs POST the job object once the job completes; feeds POST a feed-run payload when changes are detected. Delivery
+  state is exposed on the job (webhook_status, webhook_error) and in the dashboard, and both can be re-sent through
+  dedicated resend endpoints. No signing secret, signature header, retry schedule or event-type catalogue is documented
+  - the payload is identified by the resource id, not by an event name.
+delivery:
+  transport: https-post
+  content_type: application/json
+  configured_via: webhook_url on POST /v1/crawl and POST /v2/feed
+  signature: null
+  signature_note: No HMAC / signature header is documented. A receiver cannot authenticate the sender except by
+    URL secrecy and by re-fetching GET /v1/job/{id} with its own key.
+  retries: not documented; manual resend via API or dashboard "Resend" button
+  dedup_field: id (job id) / feed run id
+  delivery_status_fields:
+  - webhook_status
+  - webhook_error
+  resend:
+  - operation: POST /v1/job/{id}/webhook/resend
+    response: WebhookResendResponse {success, status_code, webhook_error, webhook_url, job_id, message}
+  - operation: POST /v2/feed/{id}/webhook/resend
+    note: Resends the webhook for the latest completed feed run.
+events:
+- name: crawl_job.completed
+  trigger: A crawl job reaches a terminal status (done or error).
+  payload: 'The job object as returned by GET /v1/job/{id}: {id, status, url, output_formats, job_items[...], ...}'
+  source: https://webcrawlerapi.com/docs/async-requests
+  note: 'The docs show the payload as {"id": ..., ...} - i.e. the job body. There is no event-type field.'
+- name: feed.changes_detected
+  trigger: A scheduled or forced feed run detects new / changed / unavailable (and, with include_errors, error)
+    pages.
+  payload: Feed run details with change information; each changed/new page carries a content_url in the feed's output_format.
+  source: https://webcrawlerapi.com/docs/feeds
+polling_alternative:
+  crawl: GET /v1/job/{id}; the job carries recommended_pull_delay_ms
+  scrape: GET /v2/scrape/{id} after POST /v2/scrape?async=true
+  agent: GET /v1/agent/job/{id} (agent runs have no webhook_url)
+  feeds: GET /v2/feed/{id}/rss (Atom 1.0) or /json (JSON Feed 1.1)
+gap: Publish an AsyncAPI (or at least a signed-payload scheme with a documented header and retry policy) for the
+  two webhook events; today a receiver has no way to verify origin.

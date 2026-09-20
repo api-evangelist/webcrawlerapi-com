@@ -1,0 +1,216 @@
+generated: '2026-09-19'
+method: searched
+source: https://webcrawlerapi.com/docs (access-key, async-requests, api/caching, api/cancel, api/feed/*, api/agent/*,
+  errors, rate-limits, structured-outputs) + openapi/_original/webcrawlerapi-com-swagger.json + live unauthenticated
+  responses from api.webcrawlerapi.com (2026-09-19)
+summary: A small, asynchronous-by-default web-data API. Auth is a static API key sent as a Bearer token. Long-running
+  work returns an id and is polled (the job tells you how often) or pushed to a webhook_url. There is no idempotency
+  key, no rate-limit header and no request-id header; the strongest runtime signals are the documented cache headers
+  (X-Cache, Age, Cache-Control, X-Cache-Created-At) and the result-level success/status fields that must be read
+  even on HTTP 200.
+authentication:
+  style: api_key_bearer
+  header: 'Authorization: Bearer <api_key>'
+  spec_modeling: 'apiKey scheme named Authorization (in: header) - description "Format: Bearer {api_key}"'
+  keys_per_org: 20
+  admin_key: required for GET /v2/organization/usage
+  anonymous_operations:
+  - GET /ping
+  see: authentication/webcrawlerapi-com-authentication.yml
+versioning:
+  style: path
+  versions:
+  - v1
+  - v2
+  note: Mixed per resource; see lifecycle/ for the docs/spec prefix drift.
+asynchrony:
+  default: asynchronous
+  pattern: POST returns {id}; poll GET or receive webhook
+  poll_hint_field: recommended_pull_delay_ms (on the job object)
+  sync_option: POST /v2/scrape is synchronous by default (up to 180 s) and async with ?async=true
+  agent_runs: always asynchronous; no webhook - poll GET /v1/agent/job/{id}
+  terminal_statuses:
+    job:
+    - done
+    - error
+    job_item:
+    - done
+    - error
+    scrape_async: status != pending
+    agent:
+    - done
+    - error
+    - canceled
+    feed:
+    - active
+    - paused
+    - canceled
+idempotency:
+  documented: false
+  header: null
+  coverage: none
+  scope: []
+  notes: 'No idempotency-key mechanism appears in the docs or in any of the 24 operations (zero matches for "idempoten"
+    across the Swagger document, the reference pages and llms.txt). Every write is a plain POST/PUT: POST /v1/crawl,
+    POST /v2/scrape, POST /v2/feed and POST /v1/agent each create a new billable resource on every call. No Idempotency
+    pointer is emitted - the agent-readiness idempotency dimension is a genuine zero.'
+  agent_risk: A retried POST after a timeout starts a second paid crawl / agent run. Before retrying, list recent
+    work (GET /v2/feeds, GET /v1/agent/jobs) or keep the returned id; there is no list endpoint for crawl jobs in
+    the spec, so persist the id from the first response.
+  mitigation_not_idempotency: max_age caching returns a cached result for a matching URL+format+prompt within the
+    window (default 7 days) and cache hits are free - this dedupes reads but is not replay protection for writes.
+reversibility:
+  grade: documented
+  coverage: partial
+  summary: The primary write (a crawl job) has a documented cancel with a stated refund boundary; feeds can be paused/resumed/deleted;
+    scrapes and agent runs cannot be reversed once submitted, though an agent run is pre-bounded by a required spend
+    cap. A billing-level refund window is published separately.
+  surfaces:
+  - surface: crawl job
+    write: createCrawlJob (POST /v1/crawl)
+    reversal: cancelJob (PUT /v1/job/{id}/cancel)
+    window: '"All items, that are not in progress and not done, will be marked as canceled and will not be charged"
+      - i.e. cancel refunds only the not-yet-started items; in-progress and finished pages are billed.'
+    window_source: https://webcrawlerapi.com/docs/api/cancel
+    grade: verified
+  - surface: feed
+    write: createFeed (POST /v2/feed)
+    reversal: pauseFeed / resumeFeed (PUT /v2/feed/{id}/pause|resume), deleteFeed (DELETE /v2/feed/{id})
+    window: '"Paused feeds will not run until resumed. Any scheduled runs will be skipped." Pause is fully reversible;
+      delete/cancel is terminal (a canceled feed cannot be paused or resumed). No time window applies.'
+    window_source: https://webcrawlerapi.com/docs/api/feed/feed-manage
+    grade: documented
+  - surface: single-page scrape
+    write: createScrapeV2 (POST /v2/scrape)
+    reversal: null
+    window: null
+    grade: none
+    note: Synchronous by default and charged on success; nothing to undo. A repeat within max_age is a free cache
+      hit.
+  - surface: agent run
+    write: runAgent (POST /v1/agent)
+    reversal: null
+    window: null
+    grade: none
+    note: AgentRunView.status includes "canceled" but the spec exposes no cancel operation. The required max_spend_usd
+      is a pre-commit ceiling, not a reversal.
+  - surface: billing (charges)
+    write: top-up / subscription
+    reversal: refund by email
+    window: within 30 days of the charge; subscriptions prorated for unused days; unused top-up credits refunded;
+      processed within 7 business days
+    window_source: https://webcrawlerapi.com/refund
+    grade: verified
+dry_run_mode:
+  supported: false
+  note: 'No dry-run/validate-only flag. Closest substitutes: items_limit / max_depth to bound a crawl, max_spend_usd
+    to bound an agent run, and the free first run.'
+pagination:
+  style: mixed
+  feeds_output:
+    params:
+    - page
+    - page_size
+    defaults:
+      page: 1
+      page_size: 1000
+    max_page_size: 1000
+    applies_to:
+    - GET /v2/feed/{id}/rss
+    - GET /v2/feed/{id}/json
+    standard: RFC 5005 (per docs)
+  agent_runs:
+    params:
+    - limit
+    - offset
+    response_fields:
+    - items
+    - total
+    applies_to:
+    - GET /v1/agent/jobs
+  crawl_jobs: No list endpoint in the spec; job_items are returned whole inside the job object.
+  feeds_list: GET /v2/feeds returns all feeds (max 100 per organization).
+field_selection:
+  supported: true
+  mechanism: output_formats[] (markdown, cleaned, html, links) chooses which representations are produced; main_content_only
+    and clean_selectors trim the body; job_items carry only the URLs for the formats requested.
+  sparse_fields: false
+  expansion: false
+caching:
+  param: max_age
+  unit: seconds
+  default: 604800
+  disable: 0
+  key: normalized URL + output format + main_content_only + prompt + clean_selectors
+  response_headers:
+  - name: X-Cache
+    values:
+    - HIT
+    - MISS
+  - name: Age
+    meaning: seconds since original fetch (HIT only)
+  - name: Cache-Control
+    meaning: max-age={remaining or requested seconds}
+  - name: X-Cache-Created-At
+    meaning: ISO 8601 fetch time
+  cost: cache hits are free (changelog 2026-09-02)
+  docs: https://webcrawlerapi.com/docs/api/caching
+request_tracing:
+  supported: false
+  method: probed
+  observed_headers_on_unauthenticated_response:
+  - cf-ray
+  - cf-cache-status
+  - 'server: cloudflare'
+  note: No request-id / trace header is documented or observed; cf-ray (Cloudflare edge id) is the only correlator,
+    and it is the CDN's, not the API's.
+rate_limit_signaling:
+  headers: []
+  status_on_exhaustion: null
+  documented_limits: concurrency ceilings only (10 parallel threads per account and per target site; 5/10/20/50
+    per plan)
+  feed_force_run: 400 with a wait message when run more than once per hour
+  see: rate-limits/webcrawlerapi-com-rate-limits.yml
+error_envelope:
+  shape: '{error_code, error_message}; result-level success:false on HTTP 200; {error, message} on 401 and markdown
+    endpoints'
+  rfc9457: false
+  see: errors/webcrawlerapi-com-problem-types.yml
+webhooks:
+  configured_via: webhook_url on crawl and feed creation
+  signed: false
+  resend:
+  - POST /v1/job/{id}/webhook/resend
+  - POST /v2/feed/{id}/webhook/resend
+  see: asyncapi/webcrawlerapi-com-webhooks.yml
+content_retrieval:
+  pattern: out-of-band URLs
+  note: Page content is not inlined in job responses; job_items carry markdown_content_url / cleaned_content_url
+    / raw_content_url on data.webcrawlerapi.com, fetched with a plain GET (SDK getContent()). GET /v1/job/{id}/markdown
+    returns a content_url to one combined file; the docs also describe /markdown/content streaming text/markdown
+    directly (not in the spec).
+structured_output:
+  params:
+    scrape: prompt + response_schema
+    agent: prompt + output_schema
+  schema_language: 'JSON Schema (strict: root object, every property required, additionalProperties false, null
+    unions for optional)'
+  result_field:
+    scrape: structured_data
+    agent: data
+  docs: https://webcrawlerapi.com/docs/structured-outputs
+politeness_controls:
+  respect_robots_txt:
+    default: false
+    note: Opt-in; when true a disallowed URL fails with blocked_by_robots_txt.
+  per_site_concurrency: 10 threads shared across all customers
+  max_depth: unbounded by default
+  items_limit: required on crawl; default 10 in SDKs
+cross_links:
+  authentication: authentication/webcrawlerapi-com-authentication.yml
+  errors: errors/webcrawlerapi-com-problem-types.yml
+  lifecycle: lifecycle/webcrawlerapi-com-lifecycle.yml
+  rate_limits: rate-limits/webcrawlerapi-com-rate-limits.yml
+  webhooks: asyncapi/webcrawlerapi-com-webhooks.yml
+  data_model: data-model/webcrawlerapi-com-data-model.yml
+  overlay_operation_ids: overlays/webcrawlerapi-com-openapi-overlay.yaml

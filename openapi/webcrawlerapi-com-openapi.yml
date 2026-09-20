@@ -1,0 +1,1363 @@
+openapi: 3.0.3
+info:
+  description: WebCrawler API is a powerful web crawling and data extraction service designed for developers who
+    need to transform websites into LLM-ready structured data and RAG (Retrieval-Augmented Generation) pipelines.
+    Extract clean markdown, HTML, or structured content from any website with enterprise-grade reliability. Features
+    include intelligent content extraction, automatic link discovery, customizable crawling patterns, webhook notifications,
+    and seamless integration with AI applications. Perfect for building knowledge bases, training datasets, content
+    aggregation, competitive analysis, and powering LLM applications with fresh web data.
+  title: WebCrawler API
+  termsOfService: https://webcrawlerapi.com/tos
+  contact:
+    name: API Support
+    url: https://webcrawlerapi.com/support
+    email: support@webcrawlerapi.com
+  license:
+    name: Commercial
+    url: https://webcrawlerapi.com/tos
+  version: '2.0'
+servers:
+- url: https://api.webcrawlerapi.com
+  description: Production
+x-original-source: https://api.webcrawlerapi.com/swagger/doc.json
+x-original-format: Swagger 2.0 (saved verbatim at openapi/_original/webcrawlerapi-com-swagger.json)
+x-converted: '2026-09-19'
+x-conversion-note: Mechanical Swagger 2.0 -> OpenAPI 3.0.3 rendition by API Evangelist. Paths, parameters, schemas,
+  responses and security are the provider's own; nothing was added. The provider ships no operationIds or tag declarations
+  - API Evangelist supplies those in overlays/webcrawlerapi-com-openapi-overlay.yaml.
+paths:
+  /ping:
+    get:
+      description: Simple health check endpoint to verify the API is running and operational
+      tags:
+      - Status
+      summary: Ping API
+      responses:
+        '200':
+          description: API is operational
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v1/agent:
+    post:
+      security:
+      - ApiKeyAuth: []
+      description: Runs an agent and stores run record in database
+      tags:
+      - Agent
+      summary: Run an agent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WagentRunRequest'
+        description: Agent request parameters
+        required: true
+      responses:
+        '200':
+          description: Agent run
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRunView'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v1/agent/job/{id}:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Returns agent run info from database
+      tags:
+      - Agent
+      summary: Get agent job info
+      parameters:
+      - description: Job ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Job info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRunView'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v1/agent/jobs:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Lists agent runs from database
+      tags:
+      - Agent
+      summary: List agent jobs
+      parameters:
+      - description: Limit number of results
+        name: limit
+        in: query
+        schema:
+          type: integer
+      - description: Offset for pagination
+        name: offset
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Jobs list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRunList'
+  /v1/auth:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Verifies that the API key is valid and returns organization email
+      tags:
+      - Status
+      summary: Check authentication
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v1/crawl:
+    post:
+      security:
+      - ApiKeyAuth: []
+      description: Creates a new web crawling job with specified parameters. This endpoint crawls websites and extracts
+        content based on configuration.
+      tags:
+      - Jobs
+      summary: Create a new crawl job
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostJobRequest'
+        description: Job parameters
+        required: true
+      responses:
+        '200':
+          description: Job created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '402':
+          description: Insufficient balance
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '403':
+          description: Organization suspended or URL blocked
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v1/job/{id}:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Retrieves the details and status of a specific job including all items
+      tags:
+      - Jobs
+      summary: Get job details
+      parameters:
+      - description: Job ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - description: Include links found on pages
+        name: include_links
+        in: query
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Job details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrawlJobView'
+        '401':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v1/job/{id}/cancel:
+    put:
+      security:
+      - ApiKeyAuth: []
+      description: Cancels a running or pending job
+      tags:
+      - Jobs
+      summary: Cancel a job
+      parameters:
+      - description: Job ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Job cancelled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '401':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v1/job/{id}/markdown:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Downloads all successful markdown job items, combines them with separators, caches and serves
+        as single file
+      tags:
+      - Jobs
+      summary: Get combined markdown for a job
+      parameters:
+      - description: Job ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Combined markdown content
+          content:
+            text/markdown:
+              schema:
+                type: string
+        '400':
+          description: Job is not a markdown type
+          content:
+            text/markdown:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '401':
+          description: Access denied
+          content:
+            text/markdown:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Job not found or no markdown content
+          content:
+            text/markdown:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '422':
+          description: Job not finished
+          content:
+            text/markdown:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Internal server error
+          content:
+            text/markdown:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v1/job/{id}/urls:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Retrieves all URLs discovered by a crawl job with path clustering information
+      tags:
+      - Jobs
+      summary: Get job URLs
+      parameters:
+      - description: Job ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: URLs and clusters
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v1/job/{id}/webhook/resend:
+    post:
+      security:
+      - ApiKeyAuth: []
+      description: Resends the webhook notification for a completed job
+      tags:
+      - Jobs
+      summary: Resend webhook
+      parameters:
+      - description: Job ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Webhook resend status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookResendResponse'
+        '400':
+          description: Job has no webhook URL
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v2/feed:
+    post:
+      security:
+      - ApiKeyAuth: []
+      description: Creates a new feed for monitoring website changes. Feeds automatically crawl the specified URL
+        at regular intervals and detect new or changed content.
+      tags:
+      - Feeds
+      summary: Create a new feed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFeedRequest'
+        description: Feed parameters
+        required: true
+      responses:
+        '200':
+          description: Feed created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '402':
+          description: Insufficient balance
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '403':
+          description: Organization suspended
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v2/feed/{id}:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Retrieves the details and recent runs of a specific feed including status, configuration, and
+        execution history
+      tags:
+      - Feeds
+      summary: Get feed details
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Feed details with recent runs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+    delete:
+      security:
+      - ApiKeyAuth: []
+      description: Permanently cancels and deletes a feed. This action cannot be undone.
+      tags:
+      - Feeds
+      summary: Delete a feed
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Feed deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v2/feed/{id}/json:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Returns the feed content in JSON Feed format (https://jsonfeed.org/)
+      tags:
+      - Feeds
+      summary: Get feed in JSON format
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - description: 'Page number (default: 1)'
+        name: page
+        in: query
+        schema:
+          type: integer
+      - description: 'Items per page (default: 1000, max: 1000)'
+        name: page_size
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: JSON Feed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v2/feed/{id}/pause:
+    put:
+      security:
+      - ApiKeyAuth: []
+      description: Pauses an active feed to temporarily stop scheduled crawls
+      tags:
+      - Feeds
+      summary: Pause a feed
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Feed paused successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request or feed cannot be paused
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v2/feed/{id}/resume:
+    put:
+      security:
+      - ApiKeyAuth: []
+      description: Resumes a paused feed to restart scheduled crawls
+      tags:
+      - Feeds
+      summary: Resume a paused feed
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Feed resumed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request or feed cannot be resumed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v2/feed/{id}/rss:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Returns the feed content in Atom 1.0 format with RFC 5005 pagination support
+      tags:
+      - Feeds
+      summary: Get feed in Atom/RSS format
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - description: 'Page number (default: 1)'
+        name: page
+        in: query
+        schema:
+          type: integer
+      - description: 'Items per page (default: 1000, max: 1000)'
+        name: page_size
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Atom XML feed
+          content:
+            text/xml:
+              schema:
+                type: string
+        '400':
+          description: Invalid request
+          content:
+            text/xml:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            text/xml:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v2/feed/{id}/run:
+    put:
+      security:
+      - ApiKeyAuth: []
+      description: Triggers an immediate feed run outside of the regular schedule. Rate limited to one run per hour.
+      tags:
+      - Feeds
+      summary: Force run a feed
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Feed run triggered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request or rate limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '402':
+          description: Insufficient balance
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v2/feed/{id}/webhook/resend:
+    post:
+      security:
+      - ApiKeyAuth: []
+      description: Resends the webhook notification for the latest completed feed run
+      tags:
+      - Feeds
+      summary: Resend feed webhook
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Webhook resent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request or no webhook configured
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Failed to send webhook
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v2/feeds:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Retrieves all feeds for the authenticated organization
+      tags:
+      - Feeds
+      summary: List all feeds
+      responses:
+        '200':
+          description: List of feeds
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/FeedResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v2/organization/usage:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Retrieves usage statistics for the authenticated organization within a date range
+      tags:
+      - Organization
+      summary: Get organization usage
+      parameters:
+      - description: Start date (YYYY-MM-DD format)
+        name: from
+        in: query
+        schema:
+          type: string
+      - description: End date (YYYY-MM-DD format)
+        name: to
+        in: query
+        schema:
+          type: string
+      - description: 'Include daily breakdown (default: false)'
+        name: include_daily
+        in: query
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Usage statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  /v2/scrape:
+    post:
+      security:
+      - ApiKeyAuth: []
+      description: Creates a new V2 scrape job with improved output formats and optional async mode. Returns content
+        directly in sync mode or job ID in async mode.
+      tags:
+      - V2 Scraping
+      summary: Create V2 scrape job
+      parameters:
+      - description: Run asynchronously (returns job ID instead of waiting)
+        name: async
+        in: query
+        schema:
+          type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostScrapeRequestV2'
+        description: V2 Scrape parameters
+        required: true
+      responses:
+        '200':
+          description: Job ID (async mode)
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScrapeResponseError'
+        '402':
+          description: Insufficient balance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScrapeResponseError'
+        '403':
+          description: Organization suspended or URL blocked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScrapeResponseError'
+  /v2/scrape/{id}:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Retrieves the result of a V2 scrape job by ID
+      tags:
+      - V2 Scraping
+      summary: Get V2 scrape result
+      parameters:
+      - description: Job ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Scrape result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostScrapeResponseV2'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScrapeResponseError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScrapeResponseError'
+components:
+  schemas:
+    AgentRunList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentRunView'
+        total:
+          type: integer
+    AgentRunView:
+      type: object
+      properties:
+        balance_used_usd:
+          type: number
+        created_at:
+          type: string
+        data:
+          type: object
+        error_reason:
+          type: string
+        id:
+          type: string
+        max_spend_usd:
+          type: number
+        model:
+          type: string
+        prompt:
+          type: string
+        status:
+          type: string
+        success:
+          type: boolean
+        updated_at:
+          type: string
+        urls:
+          type: array
+          items:
+            type: string
+    CrawlJobItemView:
+      type: object
+      properties:
+        cleaned_content_url:
+          type: string
+        cost:
+          type: number
+        created_at:
+          type: string
+        error:
+          type: string
+        error_code:
+          type: string
+        id:
+          type: string
+        job_id:
+          type: string
+        last_error:
+          type: string
+        links:
+          type: array
+          items:
+            type: string
+        markdown_content_url:
+          type: string
+        original_url:
+          type: string
+        page_status_code:
+          type: integer
+        raw_content_url:
+          type: string
+        referred_url:
+          type: string
+        status:
+          type: string
+        title:
+          type: string
+        updated_at:
+          type: string
+    CrawlJobView:
+      type: object
+      properties:
+        allow_subdomains:
+          type: boolean
+        blacklist_regexp:
+          type: string
+        created_at:
+          type: string
+        finished_at:
+          type: string
+        id:
+          type: string
+        items_limit:
+          type: integer
+        job_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CrawlJobItemView'
+        max_depth:
+          type: integer
+        org_id:
+          type: string
+        output_formats:
+          type: array
+          items:
+            type: string
+        recommended_pull_delay_ms:
+          type: integer
+        respect_robots_txt:
+          type: boolean
+        scrape_type:
+          type: string
+        status:
+          type: string
+        updated_at:
+          type: string
+        url:
+          type: string
+        webhook_url:
+          type: string
+        whitelist_regexp:
+          type: string
+    FeedResponse:
+      type: object
+      properties:
+        created_at:
+          type: string
+        id:
+          type: string
+        include_errors:
+          type: boolean
+        interval_minutes:
+          type: integer
+        items_limit:
+          type: integer
+        last_run_at:
+          type: string
+        name:
+          type: string
+        next_run_at:
+          type: string
+        output_format:
+          type: string
+        recent_runs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeedRunResponse'
+        status:
+          type: string
+        tlsh_change_threshold:
+          type: integer
+        url:
+          type: string
+        webhook_url:
+          type: string
+    FeedRunResponse:
+      type: object
+      properties:
+        cost_usd:
+          type: number
+        finished_at:
+          type: string
+        id:
+          type: string
+        pages_changed:
+          type: integer
+        pages_crawled:
+          type: integer
+        pages_errors:
+          type: integer
+        pages_new:
+          type: integer
+        pages_unavailable:
+          type: integer
+        started_at:
+          type: string
+        status:
+          type: string
+    PostFeedRequest:
+      type: object
+      required:
+      - url
+      properties:
+        allow_subdomains:
+          type: boolean
+        blacklist_regexp:
+          type: string
+        include_errors:
+          type: boolean
+        items_limit:
+          type: integer
+        main_content_only:
+          type: boolean
+        max_depth:
+          type: integer
+        name:
+          type: string
+        output_format:
+          type: string
+        respect_robots_txt:
+          type: boolean
+        tlsh_change_threshold:
+          type: integer
+        url:
+          type: string
+        webhook_url:
+          type: string
+        whitelist_regexp:
+          type: string
+    PostJobRequest:
+      type: object
+      properties:
+        blacklist_regexp:
+          type: string
+          example: .*\/admin\/.*
+        items_limit:
+          type: integer
+          example: 10
+        keep_query_params:
+          type: boolean
+          example: false
+        main_content_only:
+          type: boolean
+          example: false
+        max_age:
+          type: integer
+          example: 604800
+        max_depth:
+          type: integer
+          example: 2
+        output_formats:
+          type: array
+          items:
+            type: string
+          example:
+          - '["markdown"'
+          - '"html"]'
+        respect_robots_txt:
+          type: boolean
+          example: false
+        scrape_type:
+          type: string
+          example: markdown
+        url:
+          type: string
+          example: https://example.com
+        webhook_url:
+          type: string
+          example: https://your-domain.com/webhook
+        whitelist_regexp:
+          type: string
+          example: .*\/blog\/.*
+    PostScrapeRequestV2:
+      type: object
+      properties:
+        clean_selectors:
+          type: string
+          example: .ad,.sidebar
+        main_content_only:
+          type: boolean
+          example: false
+        max_age:
+          type: integer
+          example: 604800
+        output_format:
+          description: 'Deprecated: use output_formats instead.'
+          type: string
+          example: markdown
+        output_formats:
+          type: array
+          items:
+            type: string
+          example:
+          - '["markdown"'
+          - '"html"]'
+        prompt:
+          type: string
+          example: Extract all product prices
+        respect_robots_txt:
+          type: boolean
+          example: false
+        response_schema:
+          type: object
+        url:
+          type: string
+          example: https://example.com
+    PostScrapeResponseV2:
+      type: object
+      properties:
+        cleaned_content:
+          type: string
+        links:
+          type: array
+          items:
+            type: string
+        markdown:
+          type: string
+        page_status_code:
+          type: integer
+        page_title:
+          type: string
+        raw_content:
+          type: string
+        status:
+          type: string
+        structured_data: {}
+        success:
+          type: boolean
+    ScrapeResponseError:
+      type: object
+      properties:
+        error_code:
+          type: string
+        error_message:
+          type: string
+        status:
+          type: string
+        success:
+          type: boolean
+    WagentRunRequest:
+      type: object
+      properties:
+        max_age:
+          type: integer
+          example: 604800
+        max_spend_usd:
+          type: number
+        model:
+          type: string
+        output_schema:
+          type: object
+          additionalProperties: true
+        prompt:
+          type: string
+        seed_urls_only:
+          type: boolean
+        urls:
+          type: array
+          items:
+            type: string
+    WebhookResendResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+        message:
+          type: string
+        status_code:
+          type: integer
+        success:
+          type: boolean
+        webhook_error:
+          type: string
+        webhook_url:
+          type: string
+  securitySchemes:
+    ApiKeyAuth:
+      description: 'API key for authentication. Format: Bearer {api_key}'
+      type: apiKey
+      name: Authorization
+      in: header

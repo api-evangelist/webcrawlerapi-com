@@ -1,0 +1,172 @@
+generated: '2026-09-19'
+method: derived
+source: Derived from the 13 definitions in openapi/_original/webcrawlerapi-com-swagger.json ($ref links and id/org_id/job_id
+  reference fields) plus the object descriptions on https://webcrawlerapi.com/docs/job and the feed/agent reference
+  pages.
+docs: https://webcrawlerapi.com/docs/job
+notation: Entities are addressed by opaque string ids (UUID for jobs and job items, cuid-style for organizations,
+  short ids for feeds, ar_-prefixed for agent runs in the docs example). Relationships use has_one / has_many /
+  belongs_to with the reference field in `via`.
+entities:
+- name: Organization
+  id_field: org_id
+  id_example: cm48ww9kw00019rv7bsyfko1d
+  domain: account
+  description: The billing/tenant boundary. Owns API keys (up to 20), jobs, feeds and agent runs; has a balance
+    in USD (1 USD = 1,000,000 credits) and usage statistics.
+  schema: null
+  note: No schema in the spec; surfaced through org_id on every child and through /v2/organization/usage and GET
+    /organization/balance.
+- name: ApiKey
+  domain: account
+  description: Named Bearer key; one marked default; an "admin" key is required for /organization/usage.
+  schema: null
+- name: CrawlJob
+  schema: CrawlJobView
+  id_field: id
+  id_type: uuid
+  domain: crawl
+  status_values:
+  - new
+  - in_progress
+  - done
+  - error
+  description: A multi-page crawl started by POST /v1/crawl. Carries the request parameters (url, output_formats,
+    items_limit, max_depth, whitelist/blacklist_regexp, respect_robots_txt, allow_subdomains, webhook_url), recommended_pull_delay_ms
+    for polling, and the job_items array.
+- name: CrawlJobItem
+  schema: CrawlJobItemView
+  id_field: id
+  id_type: uuid
+  domain: crawl
+  status_values:
+  - new
+  - in_progress
+  - done
+  - error
+  description: 'One crawled page: original_url, referred_url, title, page_status_code, cost, per-format content
+    URLs (markdown_content_url / cleaned_content_url / raw_content_url on data.webcrawlerapi.com), links[], and
+    error_code/last_error on failure.'
+- name: ScrapeResult
+  schema: PostScrapeResponseV2
+  domain: scrape
+  description: 'Single-page result from POST /v2/scrape (inline) or GET /v2/scrape/{id} (async): success, status,
+    markdown / cleaned_content / raw_content / links / structured_data, page_title, page_status_code. Failure shape
+    is ScrapeResponseError.'
+- name: Feed
+  schema: FeedResponse
+  id_field: id
+  domain: feeds
+  status_values:
+  - active
+  - paused
+  - canceled
+  description: A scheduled change-detection monitor for a URL (interval_minutes, items_limit, output_format, tlsh_change_threshold,
+    include_errors, webhook_url, next_run_at, last_run_at) exposing recent_runs and rendered as Atom 1.0 / JSON
+    Feed 1.1.
+- name: FeedRun
+  schema: FeedRunResponse
+  id_field: id
+  domain: feeds
+  description: 'One execution of a feed: pages_crawled / changed / new / unavailable / errors, cost_usd, started_at,
+    finished_at, status. A force-run response also returns a job_id.'
+- name: FeedItem
+  domain: feeds
+  description: A changed/new/unavailable/error page entry in the feed output (change_type, page_status_code, content_url,
+    page_size) - exists in the Atom/JSON Feed renderings, not as a spec definition.
+  schema: null
+- name: AgentRun
+  schema: AgentRunView
+  id_field: id
+  domain: agent
+  status_values:
+  - in_progress
+  - done
+  - error
+  - canceled
+  description: 'A crawling-agent (Wagent) run from POST /v1/agent: prompt, model, urls, max_spend_usd, balance_used_usd,
+    success, data (extracted JSON, shaped by output_schema), error_reason. Listed via AgentRunList {items, total}
+    with limit/offset.'
+- name: WebhookDelivery
+  schema: WebhookResendResponse
+  domain: events
+  description: 'Delivery state of the completion callback: webhook_status / webhook_error on the job, and {success,
+    status_code, webhook_error, webhook_url, job_id} from the resend endpoints.'
+- name: ContentObject
+  domain: storage
+  description: The page content itself, stored out of band and fetched by URL (data.webcrawlerapi.com/markdown|raw|clean/...,
+    or the combined markdown content_url). Not an API entity; retrieved with a plain unauthenticated GET per the
+    SDK getContent() helpers.
+  schema: null
+relationships:
+- from: Organization
+  to: CrawlJob
+  type: has_many
+  via: CrawlJobView.org_id
+- from: Organization
+  to: Feed
+  type: has_many
+  via: feeds are listed per organization (GET /v2/feeds); max 100
+- from: Organization
+  to: AgentRun
+  type: has_many
+  via: GET /v1/agent/jobs (limit/offset)
+- from: Organization
+  to: ApiKey
+  type: has_many
+  via: dashboard Access Keys (max 20)
+- from: CrawlJob
+  to: CrawlJobItem
+  type: has_many
+  via: CrawlJobView.job_items[] / CrawlJobItemView.job_id
+- from: CrawlJobItem
+  to: CrawlJobItem
+  type: belongs_to
+  via: CrawlJobItemView.referred_url (the page that linked to it)
+  note: URL reference, not an id.
+- from: CrawlJobItem
+  to: ContentObject
+  type: has_one
+  via: markdown_content_url / cleaned_content_url / raw_content_url (one per requested output format)
+- from: CrawlJob
+  to: ContentObject
+  type: has_one
+  via: GET /v1/job/{id}/markdown -> content_url (combined markdown)
+- from: CrawlJob
+  to: WebhookDelivery
+  type: has_one
+  via: webhook_url / webhook_status / webhook_error; POST /v1/job/{id}/webhook/resend
+- from: Feed
+  to: FeedRun
+  type: has_many
+  via: FeedResponse.recent_runs[]
+- from: FeedRun
+  to: CrawlJob
+  type: belongs_to
+  via: force-run response job_id
+  note: Each feed run is executed as a crawl job under the hood.
+- from: Feed
+  to: FeedItem
+  type: has_many
+  via: Atom entries / JSON Feed items[]
+- from: Feed
+  to: WebhookDelivery
+  type: has_one
+  via: webhook_url; POST /v2/feed/{id}/webhook/resend
+- from: AgentRun
+  to: ContentObject
+  type: has_one
+  via: AgentRunView.data (inline JSON, not a URL)
+- from: ScrapeResult
+  to: AgentRun
+  type: belongs_to
+  via: prompt-based /v2/scrape is routed to the agent (docs/pricing)
+  note: Implementation relationship stated in the pricing docs; no id is exposed.
+lifecycle_flows:
+  crawl: POST /v1/crawl -> {id} -> poll GET /v1/job/{id} every recommended_pull_delay_ms (or receive webhook) ->
+    job_items[].markdown_content_url -> optionally GET /v1/job/{id}/markdown, /urls; PUT /v1/job/{id}/cancel to
+    stop.
+  scrape: POST /v2/scrape (sync, up to 180 s) or ?async=true -> {id} -> GET /v2/scrape/{id} until status != pending.
+  feed: POST /v2/feed -> scheduled runs -> GET /v2/feed/{id}/rss|json or webhook -> pause/resume/run/delete.
+  agent: POST /v1/agent (max_spend_usd required) -> {id, status in_progress} -> GET /v1/agent/job/{id} until done|error|canceled
+    -> data.

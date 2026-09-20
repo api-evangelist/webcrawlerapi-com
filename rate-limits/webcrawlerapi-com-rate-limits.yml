@@ -1,0 +1,104 @@
+generated: '2026-09-19'
+method: searched
+source: https://webcrawlerapi.com/docs/rate-limits + https://webcrawlerapi.com/#pricing + feed/agent/organization
+  reference pages + changelog
+corroboration: Unauthenticated POST https://api.webcrawlerapi.com/v1/crawl on 2026-09-19 returned 401 {"error":"Unauthorized","message":"No
+  Authorization header..."} with only Cloudflare headers (cf-ray, cf-cache-status) - no RateLimit-*, X-RateLimit-*
+  or Retry-After headers were present on that response, and none are documented anywhere.
+confidence: medium
+confidence_note: The documented limits are concurrency ceilings (parallel threads/requests), not request-per-window
+  quotas, and the provider documents no response header and no status code for exhaustion. An agent has no runtime
+  signal to read; it must count its own in-flight requests against the plan ceiling.
+limit_count: 9
+scopes:
+- scope: per-account
+  surface: all crawling/scraping
+  window: concurrent
+  limit: 10
+  unit: parallel threads
+  burst: null
+  status_on_exhaustion: null
+  headers: []
+  retry_after: null
+  source: https://webcrawlerapi.com/docs/rate-limits
+  note: '"Each account is limited to 10 parallel threads ... regardless of the target website." The pricing page
+    refines this by plan (below).'
+- scope: per-target-website (shared across ALL accounts)
+  surface: all crawling/scraping
+  window: concurrent
+  limit: 10
+  unit: parallel threads
+  status_on_exhaustion: null
+  headers: []
+  source: https://webcrawlerapi.com/docs/rate-limits
+  note: 'Politeness ceiling: if another customer is already using 3 threads on example.com, you get at most 7. Documented
+    as an ethical-scraping control, and it means throughput on a popular target is not under the caller''s control.'
+- scope: per-plan
+  surface: all requests
+  window: concurrent
+  limit:
+    Pay as you go: 5
+    Starter: 10
+    Professional: 20
+    Business: 50
+  unit: parallel requests
+  status_on_exhaustion: null
+  headers: []
+  source: https://webcrawlerapi.com/#pricing
+- scope: per-organization
+  surface: feeds
+  window: total
+  limit: 100
+  unit: feeds
+  status_on_exhaustion: null
+  source: https://webcrawlerapi.com/docs/api/feed/feed-create
+- scope: per-feed
+  surface: PUT /v2/feed/{id}/run
+  window: 1 hour
+  limit: 1
+  unit: force-runs
+  status_on_exhaustion: 400
+  status_note: '"you''ll receive a 400 error with a message indicating how long to wait" - a 400, not a 429.'
+  source: https://webcrawlerapi.com/docs/api/feed/feed-manage
+- scope: per-request
+  surface: GET /v2/feed/{id}/rss and /json
+  window: per page
+  limit: 1000
+  unit: items (page_size default and max)
+  source: https://webcrawlerapi.com/docs/api/feed/feed-rss
+- scope: per-request
+  surface: GET /v2/organization/usage
+  window: date range
+  limit: 365
+  unit: days
+  status_on_exhaustion: 400
+  source: https://webcrawlerapi.com/docs/api/organization/usage
+- scope: per-organization
+  surface: API keys
+  window: total
+  limit: 20
+  unit: keys
+  source: https://webcrawlerapi.com/changelog/2026-03-29-multiple-api-keys
+- scope: per-request
+  surface: POST /v2/scrape (synchronous)
+  window: per request
+  limit: 180
+  unit: seconds before timeout
+  source: https://webcrawlerapi.com/changelog/2026-05-19-may-improvements
+  note: Async mode (?async=true) avoids the timeout.
+other_ceilings:
+- surface: prompt / agent processing
+  limit: 128k tokens of page content
+  error_code: llm_max_context_length_error
+  source: https://webcrawlerapi.com/docs/errors
+- surface: feeds
+  limit: auto-pause after 3 consecutive errors
+  source: https://webcrawlerapi.com/changelog/2025-12-27-website-feeds
+- surface: agent runs
+  limit: max_spend_usd per run (required, caller-set)
+  source: https://webcrawlerapi.com/docs/api/agent/agent-run
+headers_documented: []
+status_on_exhaustion_documented: null
+gap: Publish the concurrency ceiling and remaining capacity as response headers (RateLimit-Limit / RateLimit-Remaining
+  or X-RateLimit-*) and document the status code returned when the parallel-thread ceiling is hit, so an agent can
+  back off on signal rather than by counting.

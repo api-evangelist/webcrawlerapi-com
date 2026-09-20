@@ -1,0 +1,112 @@
+generated: '2026-09-19'
+method: searched
+source: https://webcrawlerapi.com/changelog (dated entries; each entry has its own URL listed in sitemap.xml)
+checked: '2026-09-19'
+summary: 'A dated, static, crawlable changelog with one URL per entry - 37 entries from 2025-02-18 to 2026-09-02,
+  roughly monthly. Entries are product notes rather than versioned releases: the API is path-versioned (v1/v2) and
+  the Swagger document declares info.version "2.0", but no release identifier is attached to changelog entries.
+  Every change in the recent window is additive; the one deprecation (output_format in favour of output_formats)
+  is soft and both fields still work.'
+scheme:
+  api_versioning: path (v1, v2) - see lifecycle/
+  changelog_versioning: dated entries, no semver
+  entry_count_total: 37
+  first_entry: '2025-02-18'
+  latest_entry: '2026-09-02'
+current_version:
+  spec_declared: '2.0'
+  source: openapi/_original/webcrawlerapi-com-swagger.json info.version
+  paths: mixed /v1 (crawl, job, agent, auth) and /v2 (scrape, feed, organization/usage)
+feeds:
+  rss: null
+  atom: null
+  json: null
+  note: The changelog has no feed of its own. The blog RSS (https://webcrawlerapi.com/rss.xml) does not carry changelog
+    entries. llms.txt lists the changelog URL.
+entries:
+- date: '2026-09-02'
+  title: Cache Hits Are Now Free
+  change: additions
+  breaking: false
+  highlights:
+  - Cache hits on /v2/scrape and crawling-agent runs (same model, prompt and URLs) are returned at no cost.
+  url: https://webcrawlerapi.com/changelog/2026-09-02-cache-hits-free
+- date: '2026-06-19'
+  title: Introducing the Crawling Agent (Wagent)
+  change: additions
+  breaking: false
+  highlights:
+  - 'New POST /v1/agent surface: prompt, required max_spend_usd cap, urls, output_schema (JSON Schema), model selection.'
+  - Billed per LLM token plus per page.
+  url: https://webcrawlerapi.com/changelog/2026-06-19-crawling-agent
+- date: '2026-05-19'
+  title: Sitemap Crawling, Job Cost Visibility, and Dashboard Filters
+  change: additions
+  breaking: false
+  highlights:
+  - Crawl jobs parse sitemap.xml to seed the queue.
+  - Sync /v2/scrape timeout extended from 2 to 3 minutes.
+  - Job cost and status filters in the dashboard; tax-inclusive Stripe Checkout.
+  url: https://webcrawlerapi.com/changelog/2026-05-19-may-improvements
+- date: '2026-04-14'
+  title: Output Formats
+  change: additions
+  breaking: false
+  highlights:
+  - /v2/scrape accepts output_formats[] (markdown, cleaned, html, links); output_format becomes legacy and is overridden
+    when both are sent.
+  url: https://webcrawlerapi.com/changelog/2026-04-14-output-formats
+- date: '2026-04-09'
+  title: Organization Balance Endpoint
+  change: additions
+  breaking: false
+  highlights:
+  - New GET /organization/balance returning total_balance in USD.
+  url: https://webcrawlerapi.com/changelog/2026-04-09-organization-balance-endpoint
+- date: '2026-03-29'
+  title: Multiple API Keys
+  change: additions
+  breaking: false
+  highlights:
+  - Up to 20 named API keys per organization; individual revocation; default key.
+  url: https://webcrawlerapi.com/changelog/2026-03-29-multiple-api-keys
+- date: '2026-03-09'
+  title: Subscriptions, Structured Outputs, and Markdown Export
+  change: additions
+  breaking: false
+  highlights:
+  - Self-serve monthly subscriptions.
+  - response_schema on prompt-based /v2/scrape.
+  - Combined markdown export for crawl jobs.
+  url: https://webcrawlerapi.com/changelog/2026-03-09-subscriptions-structured-outputs-markdown-export
+- date: '2026-01-23'
+  title: Structured Outputs with JSON Schema
+  change: additions
+  breaking: false
+  highlights:
+  - response_schema parameter enforcing JSON Schema on prompt output; $0.002 per request on top of crawl cost.
+  url: https://webcrawlerapi.com/changelog/2026-01-23-structured-outputs-prompts
+- date: '2026-01-05'
+  title: Combined Markdown Export Endpoint
+  change: additions
+  breaking: false
+  highlights:
+  - New GET /job/:id/markdown returning one concatenated markdown file per job.
+  url: https://webcrawlerapi.com/changelog/2026-01-05-markdown-endpoint
+- date: '2025-12-27'
+  title: Monitor Any Website with RSS/JSON Feeds
+  change: additions
+  breaking: false
+  highlights:
+  - 'New Feeds API: Atom 1.0, JSON Feed, webhooks; auto-pause after 3 consecutive errors.'
+  url: https://webcrawlerapi.com/changelog/2025-12-27-website-feeds
+- date: '2025-11-25'
+  title: Nov '25 Updates
+  change: additions
+  breaking: false
+  highlights:
+  - max_depth crawl parameter; admin usage endpoint; docs redesign with copy-to-markdown; PDF and CSV/TSV parsing.
+  url: https://webcrawlerapi.com/changelog/2025-11-25-november-updates
+window_note: Recent window only (2025-11 onward). Earlier entries (2025-02 to 2025-09) cover PDF rendering, the
+  status-page link, error handling, proxy management, the trial, LangChain, organizations, S3/R2 delivery, the Postman
+  collection, scrape v2 (2025-06-07), Zapier/Integrately/Make/n8n integrations and the MCP server (2025-07-27).

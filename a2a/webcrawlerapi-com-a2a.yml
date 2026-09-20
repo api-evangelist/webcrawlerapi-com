@@ -1,0 +1,155 @@
+generated: '2026-09-19'
+method: probed
+source: https://webcrawlerapi.com/.well-known/agent-card.json
+card:
+  file: a2a/webcrawlerapi-com-agent-card.json
+discovery:
+  path: /.well-known/agent-card.json
+  canonical: true
+  host: webcrawlerapi.com
+  note: 'Served from the apex marketing host (Next.js behind Cloudflare), not from the API host: api.webcrawlerapi.com/.well-known/agent-card.json
+    and /agent.json both return a plain-text 404. The 200 is a real served document and not an SPA catch-all - the
+    same host answers every other /.well-known/* path (security.txt, openid-configuration, oauth-authorization-server,
+    oauth-protected-resource, ai-plugin.json, agent.json, mcp.json) with a 307 to /404, and the body is application/json
+    that parses as an AgentCard-shaped object. www.webcrawlerapi.com 301s the path to the apex. The legacy /.well-known/agent.json
+    is not served (307 -> /404). Ownership is not in question: provider.organization is "WebCrawlerAPI" with provider.url
+    https://webcrawlerapi.com, the card''s openapi_url points at api.webcrawlerapi.com, and the OpenAPI at that
+    host names support@webcrawlerapi.com and webcrawlerapi.com/tos.'
+x-evidence:
+  fetched: '2026-09-19'
+  url: https://webcrawlerapi.com/.well-known/agent-card.json
+  http_status: 200
+  content_type: application/json; charset=utf-8
+  body_bytes: 2803
+  body_parses_as: JSON object with AgentCard shape (name, description, url, provider, version, documentationUrl,
+    iconUrl, capabilities, securitySchemes, security, defaultInputModes, defaultOutputModes, skills)
+  cache_control: public, max-age=3600
+  corroborating_probes:
+  - url: https://webcrawlerapi.com/.well-known/agent.json
+    http_status: 307
+    note: Redirects to https://webcrawlerapi.com/404 - the legacy path is not served.
+  - url: https://www.webcrawlerapi.com/.well-known/agent-card.json
+    http_status: 301
+    note: Redirects to the apex.
+  - url: https://api.webcrawlerapi.com/.well-known/agent-card.json
+    http_status: 404
+  - url: https://api.webcrawlerapi.com/.well-known/agent.json
+    http_status: 404
+  - url: https://api.webcrawlerapi.com/v1
+    method: POST
+    body: '{"jsonrpc":"2.0","id":1,"method":"tasks/get","params":{"id":"apievangelist-nonexistent-probe"}}'
+    http_status: 404
+    response: 404 page not found
+    note: The card's url (https://api.webcrawlerapi.com/v1) is the REST base path, not an A2A JSON-RPC endpoint
+      - a JSON-RPC POST to it returns the router's plain-text 404. No A2A responder was found on any host.
+  - url: https://api.webcrawlerapi.com/openapi/agent.json
+    http_status: 200
+    note: The card's openapi_url resolves to a real OpenAPI 3.0.3 (3 operations, servers[] https://api.webcrawlerapi.com);
+      saved to openapi/_original/webcrawlerapi-com-agent-openapi.json.
+  - url: https://api.webcrawlerapi.com/ping
+    http_status: 200
+    response: '{"message":"pong"}'
+    note: The card's healthCheckUrl is live.
+  - url: https://a2aregistry.org
+    note: This provider entered the harvest backlog via the a2a-registry source; the card above was fetched directly
+      from the provider's own host.
+agent_card:
+  name: WebCrawlerAPI Agent
+  description: AI-powered web crawling and scraping agent. Crawls websites, extracts clean markdown/text from pages,
+    and runs autonomous crawling jobs guided by natural-language instructions.
+  url: https://api.webcrawlerapi.com/v1
+  version: 1.0.0
+  protocol_version: null
+  preferred_transport: null
+  provider:
+    organization: WebCrawlerAPI
+    url: https://webcrawlerapi.com
+  documentation_url: https://webcrawlerapi.com/docs/getting-started
+  icon_url: https://webcrawlerapi.com/favicon.png
+  capabilities:
+    streaming: false
+    pushNotifications: true
+  default_input_modes:
+  - text/plain
+  - application/json
+  default_output_modes:
+  - text/plain
+  - application/json
+  - text/markdown
+  security_schemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: API key issued from the WebCrawlerAPI dashboard, sent as a Bearer token.
+  security:
+  - bearerAuth: []
+  non_standard_fields:
+    openapi_url: https://api.webcrawlerapi.com/openapi/agent.json
+    healthCheckUrl: https://api.webcrawlerapi.com/ping
+  skill_count: 3
+  skills:
+  - id: scrape
+    name: Scrape a page
+    tags:
+    - scrape
+    - markdown
+    - html
+    - javascript-rendering
+  - id: crawl
+    name: Crawl a website
+    tags:
+    - crawl
+    - website
+    - markdown
+    - bulk
+  - id: crawling-agent
+    name: Autonomous crawling agent
+    tags:
+    - agent
+    - ai
+    - autonomous
+    - extraction
+grade:
+  a2a_version: 1.0.0
+  result: flavored
+  hard_checks:
+    capabilities_is_object: true
+    protocolVersion_present: false
+    skills_is_array: true
+  optional_checks:
+    preferredTransport: false
+    defaultInputModes: true
+    defaultOutputModes: true
+  rationale: 'Fails one hard check: protocolVersion is absent, so a client cannot tell which A2A revision the card
+    targets. Beyond the checklist, url is the REST API base path (https://api.webcrawlerapi.com/v1) rather than
+    an A2A endpoint - a JSON-RPC POST there 404s - and the card carries two non-standard members (openapi_url, healthCheckUrl)
+    that read as an OpenAPI-style service descriptor wearing the AgentCard shape. What it does well: capabilities
+    is an object, skills is a well-formed array with ids/tags/examples/input+output modes, provider and documentationUrl
+    are set, and securitySchemes/security use the AgentCard security shape correctly.'
+deviations:
+- field: protocolVersion
+  issue: missing
+  severity: hard
+  fix: 'Add "protocolVersion": "0.3.0" (or the revision implemented).'
+- field: url
+  issue: Points at the REST base path https://api.webcrawlerapi.com/v1, which does not answer A2A JSON-RPC (POST
+    -> 404 page not found).
+  severity: hard-adjacent
+  fix: Point url at a real A2A endpoint, or if the intent is REST discovery keep this card but say so - agents that
+    follow the A2A spec will POST JSON-RPC here and fail.
+- field: preferredTransport
+  issue: missing (optional; defaults to JSONRPC, which is not what the url serves).
+  severity: optional
+- field: openapi_url / healthCheckUrl
+  issue: Not AgentCard members. Harmless to spec-tolerant parsers but not portable.
+  severity: informational
+  fix: Move to additionalInterfaces / documentationUrl, or an extension namespace.
+- field: capabilities.pushNotifications
+  issue: Declared true. The REST API does support webhook_url callbacks on jobs and feeds, but there is no A2A tasks/pushNotificationConfig
+    endpoint behind this card.
+  severity: informational
+skills_vs_rest:
+  scrape: POST /v2/scrape (createScrapeV2 in overlays/)
+  crawl: POST /v1/crawl + GET /v1/job/{id} (createCrawlJob, getJob)
+  crawling-agent: POST /v1/agent + GET /v1/agent/job/{id} (runAgent, getAgentJob) - the only skill covered by the
+    card's own openapi_url document

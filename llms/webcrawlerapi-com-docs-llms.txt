@@ -1,0 +1,28 @@
+# WebCrawling | WebcrawlerAPI docs
+
+> This is a collection of pages from webcrawlerapi.com, formatted for language models.
+
+## Available Pages
+
+- [WebCrawling | WebcrawlerAPI docs](https://webcrawlerapi.com/docs)
+- [WebCrawling | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/getting-started)
+- [API access key | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/access-key)
+- [What is Crawling Job? | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/job)
+- [What is Crawling Job? | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/filters)
+- [Crawling output format types | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/crawling-types)
+- [Async and Webhooks | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/async-requests)
+- [Errors | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/errors)
+- [WebcrawlerAPI Rate Limits | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/rate-limits)
+- [.NET | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/sdk/dotnet)
+- [JavaScript and TypeScript (Node.js) | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/sdk/js)
+- [PHP | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/sdk/php)
+- [Python | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/sdk/python)
+- [🦜🔗WebcrawlerAPI LangChain Integration | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/sdk/langchain)
+- [POST /crawl | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/API/crawl)
+- [GET /job/:id | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/API/job)
+- [PUT /job/:id/cancel | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/API/cancel)
+- [POST /scrape | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/API/scrape)
+- [GET /scrape/:id | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/API/scrape-get)
+- [GET /scrape/:id/meta | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/API/scrape-meta)
+- [GET /scrape/:id/result | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/API/scrape-result)
+- [GET /job/:id/urls | WebcrawlerAPI docs](https://webcrawlerapi.com/docs/API/urls)

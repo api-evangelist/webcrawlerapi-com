@@ -64,5 +64,11 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-WebCrawlerAPI is a company surfaced via the API Evangelist harvest backlog (source: a2a-registry) and added to the network as a stub for full-pipeline profiling.
-- https://webcrawlerapi.com/
+WebCrawlerAPI (103 Labs, Netherlands) is a web crawling and scraping API that turns websites into clean, LLM-ready markdown for AI agents and RAG pipelines: asynchronous multi-page crawl jobs, single-page scraping with JSON-Schema structured outputs, scheduled change-detection Feeds (Atom 1.0 / JSON Feed 1.1 / webhooks), a prompt-driven crawling agent with a per-run spend cap, and organization usage endpoints.
+
+- Website: https://webcrawlerapi.com/
+- Docs: https://webcrawlerapi.com/docs/getting-started · Swagger UI: https://api.webcrawlerapi.com/swagger/index.html
+- Contract: `openapi/` (Swagger 2.0 from `api.webcrawlerapi.com/swagger/doc.json`, 24 operations, saved verbatim under `openapi/_original/`; Agent API OpenAPI 3.0.3 alongside it)
+- Agent surfaces: A2A agent card (`a2a/`, graded flavored), npm MCP server run locally over stdio (`mcp/`), provider-published Claude Code skill (`skills/`), `webcr` CLI (`cli/`), llms.txt (`llms/`), RFC 9727 API catalog (`well-known/`)
+- Profiled 2026-09-19 (local enrichment pass); source of the lead: a2a-registry.
+

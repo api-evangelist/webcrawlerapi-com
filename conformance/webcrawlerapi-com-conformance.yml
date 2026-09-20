@@ -1,0 +1,119 @@
+generated: '2026-09-19'
+method: searched
+source: openapi/_original/webcrawlerapi-com-swagger.json + openapi/_original/webcrawlerapi-com-agent-openapi.json
+  + well-known/ + a2a/ + https://webcrawlerapi.com/docs (feed, structured-outputs, errors, access-key pages)
+standards:
+- id: swagger-2.0
+  conforms: true
+  evidence: https://api.webcrawlerapi.com/swagger/doc.json serves a valid Swagger 2.0 document (23 paths / 24 operations
+    / 13 definitions, host api.webcrawlerapi.com) behind a live Swagger UI at /swagger/index.html; captured verbatim
+    to openapi/_original/webcrawlerapi-com-swagger.json.
+- id: openapi-3.0
+  conforms: true
+  evidence: https://api.webcrawlerapi.com/openapi/agent.json serves OpenAPI 3.0.3 for the Agent surface (3 operations,
+    servers[] https://api.webcrawlerapi.com), referenced from the agent card's openapi_url.
+- id: rfc9727-api-catalog
+  conforms: true
+  evidence: GET https://webcrawlerapi.com/.well-known/api-catalog returns 200 application/linkset+json with a linkset
+    anchored at https://webcrawlerapi.com/ (service-doc + item relations). Saved to well-known/webcrawlerapi-com-api-catalog.json.
+    It does not link the OpenAPI itself.
+- id: a2a-agent-card
+  conforms: true
+  evidence: GET https://webcrawlerapi.com/.well-known/agent-card.json returns a real AgentCard-shaped JSON object;
+    graded FLAVORED against A2A 1.0.0 (protocolVersion missing, url is the REST base, no A2A endpoint answers).
+    See a2a/webcrawlerapi-com-a2a.yml.
+  verification: flavored
+- id: mcp
+  conforms: true
+  evidence: Official MCP server published as npm webcrawler-mcp (stdio; self-hostable streamable-HTTP). local-stdio
+    only - no hosted endpoint. See mcp/.
+- id: llms-txt
+  conforms: true
+  evidence: 'https://webcrawlerapi.com/llms.txt and https://webcrawlerapi.com/docs/llms.txt both 200 text/plain
+    in llms.txt format; every docs page also serves markdown at <page>.mdx and via Accept: text/markdown.'
+- id: agent-skills
+  conforms: true
+  evidence: Provider publishes a Claude Code Agent Skill (SKILL.md with name/description frontmatter) at https://github.com/WebCrawlerAPI/skills;
+    saved verbatim under skills/.
+- id: bearer-token-auth
+  conforms: true
+  evidence: 'Docs: "Webcrawler API uses Bearer Token authentication scheme" - Authorization: Bearer <api key>. The
+    Swagger document models it as an apiKey scheme named Authorization (in: header) with description "Format: Bearer
+    {api_key}" rather than http/bearer. Not OAuth 2.0 / RFC 6750 bearer - the token is a static API key.'
+- id: oauth2
+  conforms: false
+  evidence: No OAuth flows documented or declared; /.well-known/oauth-authorization-server and /.well-known/oauth-protected-resource
+    are not served on any host.
+- id: oidc-discovery
+  conforms: false
+  evidence: /.well-known/openid-configuration not served (307 -> /404 on apex, 404 on api host).
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: No /.well-known/security.txt or /security.txt on any host.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: Errors are application/json {error_code, error_message} (and {error, message} on 401/markdown endpoints),
+    never application/problem+json. See errors/webcrawlerapi-com-problem-types.yml.
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: No Deprecation/Sunset headers or deprecation policy; one schema field is marked deprecated in prose
+    only.
+- id: rfc6585-429-rate-limit-signal
+  conforms: false
+  evidence: No rate-limit headers or 429 documented; the only documented exhaustion response is a 400 on feed force-run.
+    See rate-limits/.
+- id: idempotency-key
+  conforms: false
+  evidence: No idempotency mechanism documented or declared anywhere in the spec or docs.
+- id: webhooks
+  conforms: true
+  evidence: webhook_url on crawl jobs and feeds; POST callbacks on completion / change detection; webhook_status/webhook_error
+    on the job; resend endpoints in the spec. No signature scheme documented. See asyncapi/webcrawlerapi-com-webhooks.yml.
+- id: asyncapi
+  conforms: false
+  evidence: No AsyncAPI document published for the webhook surface.
+domain_standards:
+  note: Domain-standard signatures declared IN THE CONTRACT (0.12.0 domain_standard_conformance). The relevant market
+    standards for a web-data/feeds API are the syndication formats and the robots exclusion protocol; the contract
+    declares the first two and parameterises the third.
+  entries:
+  - id: atom-1.0-rfc4287
+    conforms: true
+    evidence: openapi/_original/webcrawlerapi-com-swagger.json paths["/v2/feed/{id}/rss"].get produces text/xml,
+      summary "Get feed in Atom/RSS format"; docs (https://webcrawlerapi.com/docs/api/feed/feed-rss) show an Atom
+      1.0 <feed xmlns="http://www.w3.org/2005/Atom"> body served as application/atom+xml with RFC 5005 page/page_size
+      pagination. Feed ids use the urn:webcrawlerapi:feed:<id> / urn:webcrawlerapi:feeditem:<id> scheme.
+    spec_location: paths./v2/feed/{id}/rss.get
+    docs: https://webcrawlerapi.com/docs/api/feed/feed-rss
+  - id: json-feed-1.1
+    conforms: true
+    evidence: openapi/_original/webcrawlerapi-com-swagger.json paths["/v2/feed/{id}/json"].get "Get feed in JSON
+      format"; docs show version https://jsonfeed.org/version/1.1 served as application/feed+json, with provider
+      extensions under the JSON Feed-mandated _webcrawlerapi custom-object namespace (change_type, page_status_code,
+      content_url, page_size). /docs/feeds shows an older /version/1 example.
+    spec_location: paths./v2/feed/{id}/json.get
+    docs: https://webcrawlerapi.com/docs/api/feed/feed-json
+  - id: rfc5005-feed-paging
+    conforms: true
+    evidence: Docs state the Atom feed "supports pagination with RFC 5005 support" via page / page_size (max 1000);
+      the spec declares both query parameters on /v2/feed/{id}/rss and /json.
+    spec_location: paths./v2/feed/{id}/rss.get.parameters
+    verification: claim-in-docs; parameters in spec
+  - id: json-schema
+    conforms: true
+    evidence: 'openapi/_original/webcrawlerapi-com-swagger.json PostScrapeRequestV2.response_schema and WagentRunRequest.output_schema
+      are JSON Schema objects the API validates AI output against (docs: "Your response_schema must be a valid JSON
+      Schema object"; supported types string/number/boolean/object/array/enum, null unions for optional fields).'
+    spec_location: definitions.PostScrapeRequestV2.response_schema, definitions.WagentRunRequest.output_schema
+    docs: https://webcrawlerapi.com/docs/structured-outputs
+  - id: rfc9309-robots-exclusion
+    conforms: true
+    evidence: openapi/_original/webcrawlerapi-com-swagger.json PostJobRequest.respect_robots_txt, PostScrapeRequestV2.respect_robots_txt
+      and PostFeedRequest.respect_robots_txt; job items fail with blocked_by_robots_txt when honoured. Default is
+      FALSE - robots.txt is opt-in, which is a compliance choice worth knowing before pointing an agent at it.
+    spec_location: definitions.PostJobRequest.respect_robots_txt
+    docs: https://webcrawlerapi.com/docs/api/crawl
+certifications: []
+compliance_note: 'No SOC 2, ISO 27001, PCI, HIPAA or other certification is claimed anywhere on the site, and no
+  trust center exists (probe-security-programs.py: trust=none). No Compliance pointer is emitted. The provider does
+  publish a GDPR Article 28 sub-processor list - recorded under regulatory/, not as a certification.'

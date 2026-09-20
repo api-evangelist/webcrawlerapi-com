@@ -1,0 +1,110 @@
+generated: '2026-09-19'
+method: searched
+format: custom-json
+rfc9457: false
+source: https://webcrawlerapi.com/docs/errors (job-level and job-item-level codes) + per-endpoint "Error Responses"
+  sections + 4xx/5xx declared in openapi/_original/webcrawlerapi-com-swagger.json + live unauthenticated 401 observed
+  2026-09-19
+summary: 'Three error shapes coexist. (1) Request-level errors: application/json {error_code, error_message} on
+  4xx (spec declares 400/402/403 on writes, 401/404/500 on reads; the schema is an untyped string map). (2) Result-level
+  errors: a 200 whose body carries success:false plus error_code/error_message - this is how /v2/scrape reports
+  a failed scrape, and how each crawl job_item reports its own failure via status:"error", error_code and last_error.
+  (3) Gateway-style {error, message} on the 401 and on the markdown endpoints. None is RFC 9457.'
+envelope:
+  media_type: application/json
+  request_level: '{ "error_code": string, "error_message": string }'
+  result_level_scrape: '{ "success": false, "status": "error", "error_code": string, "error_message": string }  (HTTP
+    200)'
+  result_level_job_item: 'job_items[] { "status": "error", "error_code": string, "last_error": string }  (HTTP 200
+    on GET /v1/job/{id})'
+  unauthorized: '{ "error": "Unauthorized", "message": "No Authorization header. Read the docs: https://webcrawlerapi.com/docs/access-key"
+    }  (observed live, HTTP 401)'
+  markdown_endpoints: '{ "error": string, "message"?: string, "status"?: string, "errors"?: [string] }'
+agent_rule: 'Never treat HTTP 200 as success on /v2/scrape or on job items: read success / status / error_code.
+  A crawl job can be status:done with every item in status:error.'
+problems:
+- status: 400
+  title: Bad Request / invalid_request
+  error_code: invalid_request
+  meaning: Invalid URL or parameters (e.g. "whitelist_regexp is invalid", max_spend_usd missing or 0, date range
+    over 365 days, feed force-run too soon, pause/resume on a canceled feed).
+  remediation: Fix the parameter named in error_message; for feed force-run the message states how long to wait.
+  declared_on: POST /v1/crawl, POST /v2/scrape, POST /v2/feed, PUT /v2/feed/{id}/{pause,resume,run}, GET /v1/job/{id}/markdown,
+    GET /v2/organization/usage, POST /v1/agent
+- status: 401
+  title: Unauthorized
+  error: Unauthorized
+  meaning: 'Missing or invalid API key in the Authorization: Bearer header.'
+  remediation: 'Send Authorization: Bearer <key> from https://dash.webcrawlerapi.com/access. On markdown endpoints
+    401 "Access denied" means the job belongs to another organization.'
+  declared_on: GET /v1/job/{id}, PUT /v1/job/{id}/cancel, GET /v1/job/{id}/{markdown,urls}; observed on POST /v1/crawl
+- status: 402
+  title: Payment Required / insufficient_balance
+  error_code: insufficient_balance
+  meaning: '"Your balance is not enough to run this job" - prepaid/subscription credits exhausted. Feed force-run
+    additionally requires >= 10,000 micro-dollars.'
+  remediation: Top up or upgrade in the dashboard; check GET /organization/balance first.
+  declared_on: POST /v1/crawl, POST /v2/scrape, POST /v2/feed, PUT /v2/feed/{id}/run, POST /v1/agent
+- status: 403
+  title: Forbidden
+  meaning: Organization suspended, or the target URL/domain is blocked (the ToS reserves URL/domain blocking after
+    DMCA notices).
+  remediation: Contact support@webcrawlerapi.com; appeals within 30 days per the ToS.
+  declared_on: POST /v1/crawl, POST /v2/scrape, POST /v2/feed
+- status: 404
+  title: Not Found
+  meaning: Job / feed / agent run not found or not owned by your organization; on /urls also "not completed"; on
+    markdown endpoints also "No markdown content available".
+  remediation: Verify the id; for /urls and /markdown wait for status done.
+  declared_on: GET /v1/job/{id}, /v1/agent/job/{id}, /v2/feed/{id}, /v2/scrape/{id} and sub-resources
+- status: 422
+  title: Unprocessable Entity - Job not finished
+  meaning: Combined markdown requested while the job is still in_progress; body carries the current status.
+  remediation: Poll GET /v1/job/{id} (honouring recommended_pull_delay_ms) until done, then retry.
+  declared_on: GET /v1/job/{id}/markdown
+- status: 500
+  title: Internal Server Error / internal_error
+  error_code: internal_error
+  meaning: Server-side failure; on markdown/content download the body may carry an errors[] array of per-page failures.
+  remediation: Retry; if persistent contact support@webcrawlerapi.com.
+  declared_on: most GET operations
+job_item_error_codes:
+- code: host_returned_error
+  meaning: Target returned a non-2xx status (other than 403).
+  retryable: depends on target
+- code: website_access_denied
+  meaning: Target returned 403.
+  retryable: false
+- code: blocked_by_robots_txt
+  meaning: respect_robots_txt=true and the URL is disallowed.
+  retryable: false
+  remediation: Only disable respect_robots_txt if you are entitled to.
+- code: name_not_resolved
+  meaning: DNS failure - host does not exist or typo.
+  retryable: false
+- code: ssl_cert_error
+  meaning: TLS handshake failed (expired/self-signed/mismatched cert). Not retried.
+  retryable: false
+- code: timeout_error
+  meaning: No response in time across several proxy attempts; often anti-bot protection.
+  retryable: true
+  remediation: Retry; if the page loads instantly in a browser, contact support.
+- code: webpage_non_success
+  meaning: Fetched but no useful content or blocked by anti-bot protection.
+  retryable: true
+- code: llm_max_context_length_error
+  meaning: Page content exceeds the 128k-token context for prompt processing.
+  retryable: false
+  remediation: Use clean_selectors / main_content_only to shrink the page.
+- code: duplicate_item
+  meaning: Identical content already seen in this job (content hash); the item is refunded.
+  retryable: false
+- code: internal_error
+  meaning: Provider-side failure on this item.
+  retryable: true
+job_level_error_codes:
+- insufficient_balance
+- invalid_request
+- internal_error
+billing_note: '"You only pay for successful requests" - errored items and duplicate_item are not charged / are refunded
+  (docs/pricing, docs/errors).'

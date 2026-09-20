@@ -1,0 +1,272 @@
+{
+  "components": {
+    "schemas": {
+      "AgentRunList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AgentRunView"
+            },
+            "type": "array"
+          },
+          "total": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "AgentRunView": {
+        "properties": {
+          "balance_used_usd": {
+            "type": "number"
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object"
+          },
+          "error_reason": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "max_spend_usd": {
+            "type": "number"
+          },
+          "model": {
+            "type": "string"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "updated_at": {
+            "type": "string"
+          },
+          "urls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "WagentRunRequest": {
+        "properties": {
+          "max_age": {
+            "example": 604800,
+            "type": "integer"
+          },
+          "max_spend_usd": {
+            "type": "number"
+          },
+          "model": {
+            "type": "string"
+          },
+          "output_schema": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "seed_urls_only": {
+            "type": "boolean"
+          },
+          "urls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "description": "API key for authentication. Format: Bearer {api_key}",
+        "in": "header",
+        "name": "Authorization",
+        "type": "apiKey"
+      }
+    }
+  },
+  "info": {
+    "contact": {
+      "email": "support@webcrawlerapi.com",
+      "name": "API Support",
+      "url": "https://webcrawlerapi.com/support"
+    },
+    "description": "Run and monitor autonomous WebCrawlerAPI agent jobs.",
+    "license": {
+      "name": "Commercial",
+      "url": "https://webcrawlerapi.com/tos"
+    },
+    "termsOfService": "https://webcrawlerapi.com/tos",
+    "title": "WebCrawlerAPI Agent API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/v1/agent": {
+      "post": {
+        "description": "Runs an agent and stores run record in database",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WagentRunRequest"
+              }
+            }
+          },
+          "description": "Agent request parameters",
+          "required": true,
+          "x-originalParamName": "request"
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRunView"
+                }
+              }
+            },
+            "description": "Agent run"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Invalid request"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Run an agent",
+        "tags": [
+          "Agent"
+        ]
+      }
+    },
+    "/v1/agent/job/{id}": {
+      "get": {
+        "description": "Returns agent run info from database",
+        "parameters": [
+          {
+            "description": "Job ID",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRunView"
+                }
+              }
+            },
+            "description": "Job info"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Job not found"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Get agent job info",
+        "tags": [
+          "Agent"
+        ]
+      }
+    },
+    "/v1/agent/jobs": {
+      "get": {
+        "description": "Lists agent runs from database",
+        "parameters": [
+          {
+            "description": "Limit number of results",
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Offset for pagination",
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentRunList"
+                }
+              }
+            },
+            "description": "Jobs list"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "List agent jobs",
+        "tags": [
+          "Agent"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Production",
+      "url": "https://api.webcrawlerapi.com"
+    }
+  ]
+}

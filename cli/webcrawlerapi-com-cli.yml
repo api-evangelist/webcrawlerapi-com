@@ -1,0 +1,65 @@
+generated: '2026-09-19'
+method: searched
+source: https://github.com/WebCrawlerAPI/webcr (README.md, package.json, Formula/webcr.rb) + https://github.com/WebCrawlerAPI/homebrew-webcrawlerapi;
+  linked from the site footer as "CLI for AI Agents"
+clis:
+- name: webcr
+  purpose: 'Turn websites into LLM-ready markdown from the command line: single-page scrape printed to stdout, or
+    a multi-page crawl that waits for the job and downloads the combined markdown.'
+  language: JavaScript (Node >= 20)
+  license: MIT
+  repository: https://github.com/WebCrawlerAPI/webcr
+  docs: https://github.com/WebCrawlerAPI/webcr#readme
+  version: 0.1.3 (Homebrew formula tag); package.json reads 0.1.1
+  package: 'packages/webcrawlerapi-com-packages.yml (registry: homebrew-tap)'
+  install:
+  - method: homebrew
+    steps:
+    - brew tap webcrawlerapi/webcrawlerapi
+    - brew install webcr
+  - method: curl installer
+    steps:
+    - curl -fsSL https://raw.githubusercontent.com/webCrawlerAPI/webcr/master/install.sh | sh
+    note: Installs to ~/.local/share/webcr/current, shims ~/.local/bin/webcr and edits the shell profile.
+  auth:
+    command: webcr auth set YOUR_API_KEY
+    status: webcr auth status
+    clear: webcr auth clear
+    key_source: https://dash.webcrawlerapi.com/access
+  invocation: webcr <url> [options]
+  commands:
+  - group: scrape
+    commands:
+    - name: webcr <url>
+      description: POST /v2/scrape with output_format markdown; prints markdown to stdout.
+      flags:
+      - -m, --main-content-only
+      - -u, --base-url <url>
+  - group: crawl
+    commands:
+    - name: webcr <url> --limit <n>
+      description: POST /v1/crawl with items_limit, waits for the job, then downloads combined markdown from GET
+        /v1/job/:id/markdown/content.
+      flags:
+      - -l, --limit <n>
+      - -d, --depth <n> / --max-depth <n>
+      - -w, --whitelist_regexp <pat>
+      - -b, --blacklist_regexp <pat>
+      - -m, --main-content-only
+      - -o, --output <dir> (one .md per page)
+      - -os, --output-single <file>
+  - group: auth
+    commands:
+    - name: auth set|status|clear
+      description: Manage the stored API key.
+  key_flows:
+  - webcr https://example.com
+  - webcr https://docs.example.com -l 25 -d 2
+  - webcr https://docs.example.com -l 25 -w "/docs" -b "/blog" -o ./pages
+  note: The CLI calls GET /v1/job/:id/markdown/content, which the docs describe but the published Swagger document
+    does not declare (it declares only GET /v1/job/{id}/markdown). Recorded as a docs-vs-spec gap in lifecycle/.
+- name: crawl-search-results
+  purpose: Download the first page of search results as a single markdown file.
+  language: TypeScript
+  repository: https://github.com/WebCrawlerAPI/crawl-search-results
+  note: Minor first-party utility; not documented on the site.

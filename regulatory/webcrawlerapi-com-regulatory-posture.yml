@@ -1,0 +1,104 @@
+generated: '2026-09-19'
+method: searched
+probe: true
+source: https://webcrawlerapi.com/legal/subprocessor-list + https://webcrawlerapi.com/tos + https://webcrawlerapi.com/privacy
+  + https://webcrawlerapi.com/refund + probes of conventional paths
+signals:
+  subprocessors:
+    url: https://webcrawlerapi.com/legal/subprocessor-list
+    dated: '2025-06-20'
+    legal_basis_cited: GDPR Article 28
+    entries:
+    - vendor: Hetzner
+      location: EU
+    - vendor: Scaleway
+      location: EU
+    - vendor: Google Cloud Run
+      location: Global
+    - vendor: Cloudflare Workers
+      location: Global
+    - vendor: Cloudflare
+      location: Global
+    - vendor: Brightdata
+      location: Global
+    - vendor: PostHog (EU)
+      location: EU
+    - vendor: Resend
+      location: US
+    change_notice: at least 30 days before authorising a new sub-processor (emergency exception); objection window
+      30 days; updates via support@webcrawlerapi.com
+    transfer_mechanism: Standard Contractual Clauses or EU-U.S. Data Privacy Framework
+    evidence:
+    - source: https://webcrawlerapi.com/legal/subprocessor-list
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: '"This page is intended to provide transparency about the identities and locations of these third parties,
+        as required under Article 28 of the General Data Protection Regulation (GDPR)." ... "We will provide at
+        least 30 days'' notice before authorizing any new sub-processor"'
+    note: A dated sub-processor table with locations, a legal basis and a change-notice commitment - the substance,
+      not the word. Linked from both the ToS and the privacy policy.
+  notice_and_action:
+    url: https://webcrawlerapi.com/tos
+    section: Copyright / DMCA and Suspension & Appeals
+    channel: support@webcrawlerapi.com
+    notice_elements_required:
+    - identification of the copyrighted work
+    - identification and location of the infringing material
+    - contact information
+    - good-faith statement
+    - statement under penalty of perjury
+    actions:
+    - blocking access to specific URLs or pages
+    - restricting access to specific websites or domains through the Service
+    appeal: within 30 days of suspension/termination; response within 30 days
+    stated_sla: '"We will review your appeal and respond within 30 days."'
+    evidence:
+    - source: https://webcrawlerapi.com/tos
+      http_status: 200
+      fetched: '2026-09-19'
+      quote: '"Upon receiving a valid DMCA takedown notice or becoming aware of credible infringement claims, we
+        will take appropriate action ... To submit a copyright infringement notice, contact us at support@webcrawlerapi.com
+        with: (1) ... (5) a statement under penalty of perjury" ... "you may appeal by contacting us at support@webcrawlerapi.com
+        within 30 days of the action ... We will review your appeal and respond within 30 days."'
+    note: A documented notice procedure (what to send, where, what happens) plus an appeals path with a stated response
+      period, carried in the Terms of Service rather than on a dedicated /legal/report-content page (which 307s
+      to /404).
+observed_but_not_claimed:
+- signal: data_subject_request
+  why_not: The privacy policy (https://webcrawlerapi.com/privacy) names a contact (support@webcrawlerapi.com) but
+    states no rights, no request process and no response period, and links to a DPA that is not served (/legal/dpa
+    and /dpa -> 307 /404). Below the substance bar.
+- signal: age_assurance
+  why_not: ToS requires users to be 18+ (or the age of majority); that is an eligibility clause, not an assurance
+    mechanism.
+- signal: data_residency
+  why_not: Sub-processor locations are listed (EU/US/Global) but no residency commitment or region selection is
+    offered.
+- signal: incident_notification
+  why_not: No breach/incident notification commitment is published; the 30-day notice on the sub-processor page
+    concerns vendor changes only.
+- signal: exit_assistance
+  why_not: The refund policy covers money, not data export. The combined-markdown export is a product feature, not
+    an exit commitment.
+probed_paths:
+- url: https://webcrawlerapi.com/legal/subprocessor-list
+  status: 200
+- url: https://webcrawlerapi.com/legal/dpa
+  status: 307
+  redirect: https://webcrawlerapi.com/404
+- url: https://webcrawlerapi.com/dpa
+  status: 307
+- url: https://webcrawlerapi.com/security
+  status: 307
+- url: https://webcrawlerapi.com/accessibility
+  status: 307
+- url: https://webcrawlerapi.com/.well-known/security.txt
+  status: 307
+- url: https://webcrawlerapi.com/refund
+  status: 200
+- url: https://webcrawlerapi.com/tos
+  status: 200
+- url: https://webcrawlerapi.com/privacy
+  status: 200
+note: Only signals with published substance are recorded; whether a regime applies is decided by the Kin Score regime
+  map, not here.

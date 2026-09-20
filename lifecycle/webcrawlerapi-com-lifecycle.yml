@@ -1,0 +1,84 @@
+generated: '2026-09-19'
+method: searched
+source: https://status.webcrawlerapi.com + https://webcrawlerapi.com/changelog + https://webcrawlerapi.com/tos +
+  https://webcrawlerapi.com/refund + openapi/_original/webcrawlerapi-com-swagger.json
+versioning:
+  scheme: path
+  versions_in_use:
+  - v1
+  - v2
+  notes: 'Crawl jobs, the agent and /v1/auth live under /v1; scrape, feeds and organization usage under /v2. v2/scrape
+    superseded v1 scrape on 2025-06-07 (changelog "scrape v2"). The docs are not consistent about prefixes: /docs/feeds
+    shows /v1/feeds while the reference pages and the Swagger document declare /v2/feed; /docs/api/organization/*
+    shows an unprefixed /organization/usage while the Swagger document declares /v2/organization/usage. The Swagger
+    document is treated as authoritative here.'
+changelog:
+  url: https://webcrawlerapi.com/changelog
+  artifact: changelog/webcrawlerapi-com-changelog.yml
+  notes: Dated, static, one URL per entry; 37 entries since 2025-02-18.
+status_page:
+  url: https://status.webcrawlerapi.com
+  provider: Better Stack
+  machine_readable_api: false
+  components:
+  - Crawler
+  observed:
+    checked: '2026-09-19'
+    state: All services are online
+    crawler_uptime_shown: 99.191% (90-day widget)
+    recent_downtime:
+    - '2026-06-25: 1 hour 8 minutes'
+    - '2026-07-02: 4 minutes'
+  probed:
+  - url: https://status.webcrawlerapi.com
+    status: 200
+  - url: https://webcrawlerapi.com/status
+    status: 307
+    note: redirects to /404
+  note: Linked from the changelog (2025-03-03 "status page link"). The marketing page claims 99.98% uptime; the
+    status page's own 90-day figure for the Crawler component is 99.191%.
+deprecation:
+  policy_documented: false
+  sunset_header: false
+  deprecated_operations: []
+  deprecated_fields:
+  - field: PostScrapeRequestV2.output_format
+    replacement: output_formats
+    since: '2026-04-14'
+    evidence: 'Schema description "Deprecated: use output_formats instead." in openapi/_original/webcrawlerapi-com-swagger.json;
+      docs mark it "(optional, legacy)".'
+    still_served: true
+  notes: No deprecation or sunset policy is published and no operation is marked deprecated, so no Deprecation pointer
+    is emitted. The one field-level deprecation is announced in the schema and the docs but carries no removal date.
+docs_vs_spec_drift:
+- documented: GET /organization/balance
+  in_spec: false
+  docs: https://webcrawlerapi.com/docs/api/organization/balance
+  note: Announced 2026-04-09; absent from swagger/doc.json.
+- documented: GET /v1/job/:id/markdown/content (text/markdown download)
+  in_spec: false
+  docs: https://webcrawlerapi.com/docs/api/markdown-content
+  note: Used by the webcr CLI; the spec declares only GET /v1/job/{id}/markdown.
+- documented: GET /v1/scrape/:id/meta and /result (listed in llms.txt)
+  in_spec: false
+  note: llms.txt still lists v1 scrape sub-resources that the current reference no longer documents.
+- in_spec: GET /v1/auth, POST /v1/job/{id}/webhook/resend
+  documented: false
+  note: Present in the Swagger document but on no docs page.
+sla:
+  documented: false
+  notes: Terms of Service disclaim uninterrupted or error-free operation ("AS IS" / "AS AVAILABLE"); no SLA, credits
+    or uptime commitment is published. Refund policy (30 days from charge, prorated for subscriptions, unused credits
+    for top-ups; processed within 7 business days) is the only remedy stated.
+terms:
+  url: https://webcrawlerapi.com/tos
+  entity: 103 Labs (Netherlands)
+  change_notice: '"reasonable notice (for example, by posting an updated date, dashboard notice, or email)"'
+  appeals: Suspension/termination appeal within 30 days; response within 30 days.
+  refund_policy: https://webcrawlerapi.com/refund
+  subprocessor_change_notice: at least 30 days before authorising a new sub-processor (https://webcrawlerapi.com/legal/subprocessor-list)
+support_lifetime:
+  stated_period: null
+  note: No support or version lifetime is stated anywhere; the ToS says "Features may evolve over time."
+roadmap:
+  published: false
