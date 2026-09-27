@@ -1,0 +1,70 @@
+openapi: 3.2.0
+info:
+  title: Webcrawlerapi Com Status API
+  version: '2.0'
+  contact:
+    name: API Support
+    url: https://webcrawlerapi.com/support
+    email: support@webcrawlerapi.com
+  license:
+    name: Commercial
+    url: https://webcrawlerapi.com/tos
+  termsOfService: https://webcrawlerapi.com/tos
+  description: 'Operations tagged Status across 2 of this provider''s published API definitions: webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.webcrawlerapi.com/
+- url: https://api.webcrawlerapi.com
+  description: Production
+tags:
+- name: Status
+paths:
+  /ping:
+    get:
+      description: Simple health check endpoint to verify the API is running and operational
+      tags:
+      - Status
+      summary: Ping API
+      responses:
+        '200':
+          description: API is operational
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: getPing
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v1/auth:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Verifies that the API key is valid and returns organization email
+      tags:
+      - Status
+      summary: Check authentication
+      responses:
+        '200':
+          description: Authentication successful
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: getV1Auth
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      description: 'API key for authentication. Format: Bearer {api_key}'
+      type: apiKey
+      name: Authorization
+      in: header
+x-refined-from:
+- webcrawlerapi-com-swagger.json
+- webcrawlerapi-com-openapi.yml

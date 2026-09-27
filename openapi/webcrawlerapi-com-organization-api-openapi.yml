@@ -1,0 +1,82 @@
+openapi: 3.2.0
+info:
+  title: Webcrawlerapi Com Organization API
+  version: '2.0'
+  contact:
+    name: API Support
+    url: https://webcrawlerapi.com/support
+    email: support@webcrawlerapi.com
+  license:
+    name: Commercial
+    url: https://webcrawlerapi.com/tos
+  termsOfService: https://webcrawlerapi.com/tos
+  description: 'Operations tagged Organization across 2 of this provider''s published API definitions: webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.webcrawlerapi.com/
+- url: https://api.webcrawlerapi.com
+  description: Production
+tags:
+- name: Organization
+paths:
+  /v2/organization/usage:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Retrieves usage statistics for the authenticated organization within a date range
+      tags:
+      - Organization
+      summary: Get organization usage
+      parameters:
+      - description: Start date (YYYY-MM-DD format)
+        name: from
+        in: query
+        schema:
+          type: string
+      - description: End date (YYYY-MM-DD format)
+        name: to
+        in: query
+        schema:
+          type: string
+      - description: 'Include daily breakdown (default: false)'
+        name: include_daily
+        in: query
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Usage statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request parameters
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: getV2OrganizationUsage
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      description: 'API key for authentication. Format: Bearer {api_key}'
+      type: apiKey
+      name: Authorization
+      in: header
+x-refined-from:
+- webcrawlerapi-com-swagger.json
+- webcrawlerapi-com-openapi.yml

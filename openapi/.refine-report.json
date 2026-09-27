@@ -1,0 +1,48 @@
+{
+  "provider": "webcrawlerapi-com",
+  "sources": [
+    "_original/webcrawlerapi-com-swagger.json",
+    "webcrawlerapi-com-openapi.yml"
+  ],
+  "outputs": [
+    "webcrawlerapi-com-agent-api-openapi.yml",
+    "webcrawlerapi-com-feeds-api-openapi.yml",
+    "webcrawlerapi-com-jobs-api-openapi.yml",
+    "webcrawlerapi-com-organization-api-openapi.yml",
+    "webcrawlerapi-com-status-api-openapi.yml",
+    "webcrawlerapi-com-v2-scraping-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/webcrawlerapi-com-openapi.yml"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "1 archived document(s) dropped as subsets of other archived documents",
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "webcrawlerapi-com-swagger.json: upgraded swagger 2.0 -> OpenAPI 3.2.0",
+    "webcrawlerapi-com-swagger.json: declared missing tag: Agent",
+    "webcrawlerapi-com-swagger.json: declared missing tag: Feeds",
+    "webcrawlerapi-com-swagger.json: declared missing tag: Jobs",
+    "webcrawlerapi-com-swagger.json: declared missing tag: Organization",
+    "webcrawlerapi-com-swagger.json: declared missing tag: Status",
+    "webcrawlerapi-com-swagger.json: declared missing tag: V2 Scraping",
+    "webcrawlerapi-com-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "webcrawlerapi-com-openapi.yml: declared missing tag: Agent",
+    "webcrawlerapi-com-openapi.yml: declared missing tag: Feeds",
+    "webcrawlerapi-com-openapi.yml: declared missing tag: Jobs",
+    "webcrawlerapi-com-openapi.yml: declared missing tag: Organization",
+    "webcrawlerapi-com-openapi.yml: declared missing tag: Status",
+    "webcrawlerapi-com-openapi.yml: declared missing tag: V2 Scraping",
+    "tag 'Agent' spans 2 source specs (webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml): per-path servers applied",
+    "tag 'Feeds' spans 2 source specs (webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml): per-path servers applied",
+    "tag 'Jobs' spans 2 source specs (webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml): per-path servers applied",
+    "tag 'Organization' spans 2 source specs (webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml): per-path servers applied",
+    "tag 'Status' spans 2 source specs (webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml): per-path servers applied",
+    "tag 'V2 Scraping' spans 2 source specs (webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml): per-path servers applied",
+    "apis.yml register: written (+6 apis, 8 total)"
+  ],
+  "skipped": [
+    "_original/webcrawlerapi-com-agent-openapi.json: archived document superseded by a larger archived document"
+  ]
+}

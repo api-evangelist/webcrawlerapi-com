@@ -1,0 +1,188 @@
+openapi: 3.2.0
+info:
+  title: Webcrawlerapi Com Agent API
+  version: '2.0'
+  contact:
+    name: API Support
+    url: https://webcrawlerapi.com/support
+    email: support@webcrawlerapi.com
+  license:
+    name: Commercial
+    url: https://webcrawlerapi.com/tos
+  termsOfService: https://webcrawlerapi.com/tos
+  description: 'Operations tagged Agent across 2 of this provider''s published API definitions: webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.webcrawlerapi.com/
+- url: https://api.webcrawlerapi.com
+  description: Production
+tags:
+- name: Agent
+paths:
+  /v1/agent:
+    post:
+      security:
+      - ApiKeyAuth: []
+      description: Runs an agent and stores run record in database
+      tags:
+      - Agent
+      summary: Run an agent
+      responses:
+        '200':
+          description: Agent run
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRunView'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WagentRunRequest'
+        description: Agent request parameters
+        required: true
+      operationId: postV1Agent
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v1/agent/job/{id}:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Returns agent run info from database
+      tags:
+      - Agent
+      summary: Get agent job info
+      parameters:
+      - description: Job ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Job info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRunView'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: getV1AgentJobById
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v1/agent/jobs:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Lists agent runs from database
+      tags:
+      - Agent
+      summary: List agent jobs
+      parameters:
+      - description: Limit number of results
+        name: limit
+        in: query
+        schema:
+          type: integer
+      - description: Offset for pagination
+        name: offset
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Jobs list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentRunList'
+      operationId: getV1AgentJobs
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+components:
+  schemas:
+    WagentRunRequest:
+      type: object
+      properties:
+        max_age:
+          type: integer
+          example: 604800
+        max_spend_usd:
+          type: number
+        model:
+          type: string
+        output_schema:
+          type: object
+          additionalProperties: true
+        prompt:
+          type: string
+        seed_urls_only:
+          type: boolean
+        urls:
+          type: array
+          items:
+            type: string
+    AgentRunView:
+      type: object
+      properties:
+        balance_used_usd:
+          type: number
+        created_at:
+          type: string
+        data:
+          type: object
+        error_reason:
+          type: string
+        id:
+          type: string
+        max_spend_usd:
+          type: number
+        model:
+          type: string
+        prompt:
+          type: string
+        status:
+          type: string
+        success:
+          type: boolean
+        updated_at:
+          type: string
+        urls:
+          type: array
+          items:
+            type: string
+    AgentRunList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentRunView'
+        total:
+          type: integer
+  securitySchemes:
+    ApiKeyAuth:
+      description: 'API key for authentication. Format: Bearer {api_key}'
+      type: apiKey
+      name: Authorization
+      in: header
+x-refined-from:
+- webcrawlerapi-com-swagger.json
+- webcrawlerapi-com-openapi.yml

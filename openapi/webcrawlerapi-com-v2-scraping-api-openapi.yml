@@ -1,0 +1,188 @@
+openapi: 3.2.0
+info:
+  title: Webcrawlerapi Com V2 Scraping API
+  version: '2.0'
+  contact:
+    name: API Support
+    url: https://webcrawlerapi.com/support
+    email: support@webcrawlerapi.com
+  license:
+    name: Commercial
+    url: https://webcrawlerapi.com/tos
+  termsOfService: https://webcrawlerapi.com/tos
+  description: 'Operations tagged V2 Scraping across 2 of this provider''s published API definitions: webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.webcrawlerapi.com/
+- url: https://api.webcrawlerapi.com
+  description: Production
+tags:
+- name: V2 Scraping
+paths:
+  /v2/scrape:
+    post:
+      security:
+      - ApiKeyAuth: []
+      description: Creates a new V2 scrape job with improved output formats and optional async mode. Returns content directly in sync mode or job ID in async mode.
+      tags:
+      - V2 Scraping
+      summary: Create V2 scrape job
+      parameters:
+      - description: Run asynchronously (returns job ID instead of waiting)
+        name: async
+        in: query
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Job ID (async mode)
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScrapeResponseError'
+        '402':
+          description: Insufficient balance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScrapeResponseError'
+        '403':
+          description: Organization suspended or URL blocked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScrapeResponseError'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostScrapeRequestV2'
+        description: V2 Scrape parameters
+        required: true
+      operationId: postV2Scrape
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v2/scrape/{id}:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Retrieves the result of a V2 scrape job by ID
+      tags:
+      - V2 Scraping
+      summary: Get V2 scrape result
+      parameters:
+      - description: Job ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Scrape result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostScrapeResponseV2'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScrapeResponseError'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScrapeResponseError'
+      operationId: getV2ScrapeById
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+components:
+  schemas:
+    PostScrapeResponseV2:
+      type: object
+      properties:
+        cleaned_content:
+          type: string
+        links:
+          type: array
+          items:
+            type: string
+        markdown:
+          type: string
+        page_status_code:
+          type: integer
+        page_title:
+          type: string
+        raw_content:
+          type: string
+        status:
+          type: string
+        structured_data: {}
+        success:
+          type: boolean
+    PostScrapeRequestV2:
+      type: object
+      properties:
+        clean_selectors:
+          type: string
+          example: .ad,.sidebar
+        main_content_only:
+          type: boolean
+          example: false
+        max_age:
+          type: integer
+          example: 604800
+        output_format:
+          description: 'Deprecated: use output_formats instead.'
+          type: string
+          example: markdown
+        output_formats:
+          type: array
+          items:
+            type: string
+          example:
+          - '["markdown"'
+          - '"html"]'
+        prompt:
+          type: string
+          example: Extract all product prices
+        respect_robots_txt:
+          type: boolean
+          example: false
+        response_schema:
+          type: object
+        url:
+          type: string
+          example: https://example.com
+    ScrapeResponseError:
+      type: object
+      properties:
+        error_code:
+          type: string
+        error_message:
+          type: string
+        status:
+          type: string
+        success:
+          type: boolean
+  securitySchemes:
+    ApiKeyAuth:
+      description: 'API key for authentication. Format: Bearer {api_key}'
+      type: apiKey
+      name: Authorization
+      in: header
+x-refined-from:
+- webcrawlerapi-com-swagger.json
+- webcrawlerapi-com-openapi.yml

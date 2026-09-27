@@ -1,3 +1,5 @@
+# x-archived-from: webcrawlerapi-com-openapi.yml
+# x-archived-on: 2026-09-26
 openapi: 3.0.3
 info:
   description: WebCrawler API is a powerful web crawling and data extraction service designed for developers who

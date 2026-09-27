@@ -11,6 +11,22 @@ description: 'WebCrawlerAPI is a web crawling and scraping API from 103 Labs (Ne
   API OpenAPI 3.0.3, an A2A agent card and RFC 9727 API catalog at /.well-known/, llms.txt, SDKs for JavaScript,
   Python, PHP, .NET and Java, an npm MCP server (local stdio), the webcr CLI, a Claude Code Agent Skill, a public
   Postman collection and a dated changelog.'
+deliveryModel:
+  model: saas
+  license_evidence:
+    not_product:
+    - webcrawlerapi/webcrawlerapi-mcp
+  open_source: unknown
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: low
+  source:
+  - openapi
+  - pricing
+  - repository-not-product
+  generated: '2026-09-25'
+  method: derived
 image: https://webcrawlerapi.com/favicon.png
 url: https://raw.githubusercontent.com/api-evangelist/webcrawlerapi-com/refs/heads/main/apis.yml
 x-type: company
@@ -33,72 +49,39 @@ tags:
 - Structured Data
 - MCP
 - A2A
+- Agent-Native
+tags_raw:
+- Web Scraping
+- Web Crawling
+- Data Extraction
+- Markdown
+- AI Agents
+- LLM
+- RAG
+- Web Feeds
+- Change Detection
+- Structured Data
+- MCP
+- A2A
 - agent-native
 apis:
-- aid: webcrawlerapi-com:webcrawler-api
-  name: WebCrawler API
-  description: REST API on api.webcrawlerapi.com for asynchronous multi-page crawl jobs (POST /v1/crawl, GET /v1/job/{id},
-    cancel, urls, combined markdown, webhook resend), single-page scraping (POST /v2/scrape sync or ?async=true,
-    GET /v2/scrape/{id}) with output_formats, main_content_only, clean_selectors, max_age caching and prompt + response_schema
-    structured outputs, scheduled change-detection Feeds (POST /v2/feed, Atom 1.0 and JSON Feed 1.1 renderings,
-    pause/resume/run/delete), the autonomous crawling agent (POST /v1/agent with a required max_spend_usd) and organization
-    usage. 24 operations published as Swagger 2.0 at https://api.webcrawlerapi.com/swagger/doc.json behind a live
-    Swagger UI; Bearer API-key auth.
-  humanURL: https://webcrawlerapi.com/docs/getting-started
-  baseURL: https://api.webcrawlerapi.com
-  tags:
-  - Web Scraping
-  - Web Crawling
-  - Data Extraction
-  - Markdown
-  - Web Feeds
-  - Structured Data
-  - AI Agents
-  properties:
-  - type: OpenAPI
-    url: openapi/webcrawlerapi-com-openapi.yml
-  - type: OpenAPI
-    name: WebCrawler API Swagger 2.0 (provider-hosted, verbatim copy in openapi/_original/)
-    url: https://api.webcrawlerapi.com/swagger/doc.json
-  - type: OpenAPI
-    name: WebCrawlerAPI Agent API OpenAPI 3.0.3 (provider-hosted, verbatim copy in openapi/_original/)
-    url: https://api.webcrawlerapi.com/openapi/agent.json
-  - type: Documentation
-    url: https://webcrawlerapi.com/docs/getting-started
-  - type: APIReference
-    url: https://api.webcrawlerapi.com/swagger/index.html
-  - type: APIReference
-    name: Endpoint reference pages
-    url: https://webcrawlerapi.com/docs/api/crawl
-  - type: Overlay
-    url: overlays/webcrawlerapi-com-openapi-overlay.yaml
-  - type: Authentication
-    url: authentication/webcrawlerapi-com-authentication.yml
-  - type: Conventions
-    url: conventions/webcrawlerapi-com-conventions.yml
-  - type: ErrorCatalog
-    url: errors/webcrawlerapi-com-problem-types.yml
-  - type: DataModel
-    url: data-model/webcrawlerapi-com-data-model.yml
-  - type: Webhooks
-    url: asyncapi/webcrawlerapi-com-webhooks.yml
-  - type: RateLimits
-    url: rate-limits/webcrawlerapi-com-rate-limits.yml
-  - type: Postman
-    url: https://www.postman.com/webcrawlerapi/webcrawlerapi-public-workspace/collection/xz2fs5u/webcrawlerapi
-  - type: AgentSkill
-    url: skills/_index.yml
-  image: https://webcrawlerapi.com/favicon.png
 - aid: webcrawlerapi-com:webcrawlerapi-mcp-server
   name: WebCrawlerAPI MCP Server
-  description: 'Official Model Context Protocol server distributed as the npm package webcrawler-mcp (npx -y webcrawler-mcp)
-    and run locally over stdio - or self-hosted over streamable HTTP with USE_HTTP=true - by the user; there is
-    no provider-hosted remote endpoint. It exposes one tool, webcrawler-scrape (url, optional prompt, optional main_content_only),
-    which POSTs to https://api.webcrawlerapi.com/v2/scrape with the API key from the WEBCRAWLER_API_KEY environment
-    variable and returns markdown (or structured_data when a prompt is set). Source: github.com/WebCrawlerAPI/webcrawlerapi-mcp.'
+  description: >-
+    Official Model Context Protocol server distributed as the npm package webcrawler-mcp (npx -y webcrawler-mcp)
+    and run locally over stdio - or self-hosted over streamable HTTP with USE_HTTP=true - by the user;
+    there is no provider-hosted remote endpoint. It exposes one tool, webcrawler-scrape (url, optional
+    prompt, optional main_content_only), which POSTs to https://api.webcrawlerapi.com/v2/scrape with the
+    API key from the WEBCRAWLER_API_KEY environment variable and returns markdown (or structured_data
+    when a prompt is set). Source: github.com/WebCrawlerAPI/webcrawlerapi-mcp.
   humanURL: https://webcrawlerapi.com/docs/sdk/mcp
   baseURL: https://api.webcrawlerapi.com
   tags:
+  - MCP
+  - AI Agents
+  - Web Scraping
+  - Agent-Native
+  tags_raw:
   - MCP
   - AI Agents
   - Web Scraping
@@ -118,15 +101,21 @@ apis:
   image: https://webcrawlerapi.com/favicon.png
 - aid: webcrawlerapi-com:webcrawlerapi-a2a-agent-card
   name: WebCrawlerAPI Agent Card
-  description: 'A2A-style agent card served from https://webcrawlerapi.com/.well-known/agent-card.json describing
-    "WebCrawlerAPI Agent" (version 1.0.0) with three skills - scrape, crawl and crawling-agent - Bearer securitySchemes,
-    text/markdown/JSON input and output modes, a healthCheckUrl and an openapi_url pointing at the Agent API OpenAPI.
-    Graded FLAVORED against A2A 1.0.0: protocolVersion is absent and the card''s url is the REST base path https://api.webcrawlerapi.com/v1,
-    which does not answer A2A JSON-RPC (a tasks/get POST returns 404). It is a real, provider-served discovery document
-    for the REST API rather than a working A2A endpoint.'
+  description: >-
+    A2A-style agent card served from https://webcrawlerapi.com/.well-known/agent-card.json describing
+    "WebCrawlerAPI Agent" (version 1.0.0) with three skills - scrape, crawl and crawling-agent - Bearer
+    securitySchemes, text/markdown/JSON input and output modes, a healthCheckUrl and an openapi_url pointing
+    at the Agent API OpenAPI. Graded FLAVORED against A2A 1.0.0: protocolVersion is absent and the card's
+    url is the REST base path https://api.webcrawlerapi.com/v1, which does not answer A2A JSON-RPC (a
+    tasks/get POST returns 404). It is a real, provider-served discovery document for the REST API rather
+    than a working A2A endpoint.
   humanURL: https://webcrawlerapi.com/docs/getting-started
   baseURL: https://api.webcrawlerapi.com/v1
   tags:
+  - A2A
+  - AI Agents
+  - Agent-Native
+  tags_raw:
   - A2A
   - AI Agents
   - agent-native
@@ -137,6 +126,192 @@ apis:
     name: A2A Agent Card (provider-hosted)
     url: https://webcrawlerapi.com/.well-known/agent-card.json
   image: https://webcrawlerapi.com/favicon.png
+- aid: webcrawlerapi-com:webcrawlerapi-com-agent-api
+  name: WebCrawlerAPI Agent API
+  description: The Agent API from WebCrawlerAPI — 3 operation(s) for agent.
+  humanURL: https://webcrawlerapi.com/docs/getting-started
+  baseURL: https://api.webcrawlerapi.com
+  tags:
+  - Agent
+  properties:
+  - type: OpenAPI
+    url: openapi/webcrawlerapi-com-agent-api-openapi.yml
+  - type: Documentation
+    url: https://webcrawlerapi.com/docs/getting-started
+  - type: APIReference
+    url: https://api.webcrawlerapi.com/swagger/index.html
+  - type: APIReference
+    url: https://webcrawlerapi.com/docs/api/crawl
+  - type: Authentication
+    url: authentication/webcrawlerapi-com-authentication.yml
+  - type: Conventions
+    url: conventions/webcrawlerapi-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/webcrawlerapi-com-problem-types.yml
+  - type: DataModel
+    url: data-model/webcrawlerapi-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/webcrawlerapi-com-webhooks.yml
+  - type: RateLimits
+    url: rate-limits/webcrawlerapi-com-rate-limits.yml
+  - type: Postman
+    url: >-
+      https://www.postman.com/webcrawlerapi/webcrawlerapi-public-workspace/collection/xz2fs5u/webcrawlerapi
+- aid: webcrawlerapi-com:webcrawlerapi-com-feeds-api
+  name: WebCrawlerAPI Feeds API
+  description: The Feeds API from WebCrawlerAPI — 9 operation(s) for feeds.
+  humanURL: https://webcrawlerapi.com/docs/getting-started
+  baseURL: https://api.webcrawlerapi.com
+  tags:
+  - Feeds
+  properties:
+  - type: OpenAPI
+    url: openapi/webcrawlerapi-com-feeds-api-openapi.yml
+  - type: Documentation
+    url: https://webcrawlerapi.com/docs/getting-started
+  - type: APIReference
+    url: https://api.webcrawlerapi.com/swagger/index.html
+  - type: APIReference
+    url: https://webcrawlerapi.com/docs/api/crawl
+  - type: Authentication
+    url: authentication/webcrawlerapi-com-authentication.yml
+  - type: Conventions
+    url: conventions/webcrawlerapi-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/webcrawlerapi-com-problem-types.yml
+  - type: DataModel
+    url: data-model/webcrawlerapi-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/webcrawlerapi-com-webhooks.yml
+  - type: RateLimits
+    url: rate-limits/webcrawlerapi-com-rate-limits.yml
+  - type: Postman
+    url: >-
+      https://www.postman.com/webcrawlerapi/webcrawlerapi-public-workspace/collection/xz2fs5u/webcrawlerapi
+- aid: webcrawlerapi-com:webcrawlerapi-com-jobs-api
+  name: WebCrawlerAPI Jobs API
+  description: The Jobs API from WebCrawlerAPI — 6 operation(s) for jobs.
+  humanURL: https://webcrawlerapi.com/docs/getting-started
+  baseURL: https://api.webcrawlerapi.com
+  tags:
+  - Jobs
+  properties:
+  - type: OpenAPI
+    url: openapi/webcrawlerapi-com-jobs-api-openapi.yml
+  - type: Documentation
+    url: https://webcrawlerapi.com/docs/getting-started
+  - type: APIReference
+    url: https://api.webcrawlerapi.com/swagger/index.html
+  - type: APIReference
+    url: https://webcrawlerapi.com/docs/api/crawl
+  - type: Authentication
+    url: authentication/webcrawlerapi-com-authentication.yml
+  - type: Conventions
+    url: conventions/webcrawlerapi-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/webcrawlerapi-com-problem-types.yml
+  - type: DataModel
+    url: data-model/webcrawlerapi-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/webcrawlerapi-com-webhooks.yml
+  - type: RateLimits
+    url: rate-limits/webcrawlerapi-com-rate-limits.yml
+  - type: Postman
+    url: >-
+      https://www.postman.com/webcrawlerapi/webcrawlerapi-public-workspace/collection/xz2fs5u/webcrawlerapi
+- aid: webcrawlerapi-com:webcrawlerapi-com-organization-api
+  name: WebCrawlerAPI Organization API
+  description: The Organization API from WebCrawlerAPI — 1 operation(s) for organization.
+  humanURL: https://webcrawlerapi.com/docs/getting-started
+  baseURL: https://api.webcrawlerapi.com
+  tags:
+  - Organization
+  properties:
+  - type: OpenAPI
+    url: openapi/webcrawlerapi-com-organization-api-openapi.yml
+  - type: Documentation
+    url: https://webcrawlerapi.com/docs/getting-started
+  - type: APIReference
+    url: https://api.webcrawlerapi.com/swagger/index.html
+  - type: APIReference
+    url: https://webcrawlerapi.com/docs/api/crawl
+  - type: Authentication
+    url: authentication/webcrawlerapi-com-authentication.yml
+  - type: Conventions
+    url: conventions/webcrawlerapi-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/webcrawlerapi-com-problem-types.yml
+  - type: DataModel
+    url: data-model/webcrawlerapi-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/webcrawlerapi-com-webhooks.yml
+  - type: RateLimits
+    url: rate-limits/webcrawlerapi-com-rate-limits.yml
+  - type: Postman
+    url: >-
+      https://www.postman.com/webcrawlerapi/webcrawlerapi-public-workspace/collection/xz2fs5u/webcrawlerapi
+- aid: webcrawlerapi-com:webcrawlerapi-com-status-api
+  name: WebCrawlerAPI Status API
+  description: The Status API from WebCrawlerAPI — 2 operation(s) for status.
+  humanURL: https://webcrawlerapi.com/docs/getting-started
+  baseURL: https://api.webcrawlerapi.com
+  tags:
+  - Status
+  properties:
+  - type: OpenAPI
+    url: openapi/webcrawlerapi-com-status-api-openapi.yml
+  - type: Documentation
+    url: https://webcrawlerapi.com/docs/getting-started
+  - type: APIReference
+    url: https://api.webcrawlerapi.com/swagger/index.html
+  - type: APIReference
+    url: https://webcrawlerapi.com/docs/api/crawl
+  - type: Authentication
+    url: authentication/webcrawlerapi-com-authentication.yml
+  - type: Conventions
+    url: conventions/webcrawlerapi-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/webcrawlerapi-com-problem-types.yml
+  - type: DataModel
+    url: data-model/webcrawlerapi-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/webcrawlerapi-com-webhooks.yml
+  - type: RateLimits
+    url: rate-limits/webcrawlerapi-com-rate-limits.yml
+  - type: Postman
+    url: >-
+      https://www.postman.com/webcrawlerapi/webcrawlerapi-public-workspace/collection/xz2fs5u/webcrawlerapi
+- aid: webcrawlerapi-com:webcrawlerapi-com-v2-scraping-api
+  name: WebCrawlerAPI V2 Scraping API
+  description: The V2 Scraping API from WebCrawlerAPI — 2 operation(s) for v2 scraping.
+  humanURL: https://webcrawlerapi.com/docs/getting-started
+  baseURL: https://api.webcrawlerapi.com
+  tags:
+  - V2 Scraping
+  properties:
+  - type: OpenAPI
+    url: openapi/webcrawlerapi-com-v2-scraping-api-openapi.yml
+  - type: Documentation
+    url: https://webcrawlerapi.com/docs/getting-started
+  - type: APIReference
+    url: https://api.webcrawlerapi.com/swagger/index.html
+  - type: APIReference
+    url: https://webcrawlerapi.com/docs/api/crawl
+  - type: Authentication
+    url: authentication/webcrawlerapi-com-authentication.yml
+  - type: Conventions
+    url: conventions/webcrawlerapi-com-conventions.yml
+  - type: ErrorCatalog
+    url: errors/webcrawlerapi-com-problem-types.yml
+  - type: DataModel
+    url: data-model/webcrawlerapi-com-data-model.yml
+  - type: Webhooks
+    url: asyncapi/webcrawlerapi-com-webhooks.yml
+  - type: RateLimits
+    url: rate-limits/webcrawlerapi-com-rate-limits.yml
+  - type: Postman
+    url: >-
+      https://www.postman.com/webcrawlerapi/webcrawlerapi-public-workspace/collection/xz2fs5u/webcrawlerapi
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

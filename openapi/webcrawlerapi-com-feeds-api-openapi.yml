@@ -1,0 +1,575 @@
+openapi: 3.2.0
+info:
+  title: Webcrawlerapi Com Feeds API
+  version: '2.0'
+  contact:
+    name: API Support
+    url: https://webcrawlerapi.com/support
+    email: support@webcrawlerapi.com
+  license:
+    name: Commercial
+    url: https://webcrawlerapi.com/tos
+  termsOfService: https://webcrawlerapi.com/tos
+  description: 'Operations tagged Feeds across 2 of this provider''s published API definitions: webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.webcrawlerapi.com/
+- url: https://api.webcrawlerapi.com
+  description: Production
+tags:
+- name: Feeds
+paths:
+  /v2/feed:
+    post:
+      security:
+      - ApiKeyAuth: []
+      description: Creates a new feed for monitoring website changes. Feeds automatically crawl the specified URL at regular intervals and detect new or changed content.
+      tags:
+      - Feeds
+      summary: Create a new feed
+      responses:
+        '200':
+          description: Feed created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '402':
+          description: Insufficient balance
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '403':
+          description: Organization suspended
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFeedRequest'
+        description: Feed parameters
+        required: true
+      operationId: postV2Feed
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v2/feed/{id}:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Retrieves the details and recent runs of a specific feed including status, configuration, and execution history
+      tags:
+      - Feeds
+      summary: Get feed details
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Feed details with recent runs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: getV2FeedById
+      x-operation-id-source: derived
+    delete:
+      security:
+      - ApiKeyAuth: []
+      description: Permanently cancels and deletes a feed. This action cannot be undone.
+      tags:
+      - Feeds
+      summary: Delete a feed
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Feed deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: deleteV2FeedById
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v2/feed/{id}/json:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Returns the feed content in JSON Feed format (https://jsonfeed.org/)
+      tags:
+      - Feeds
+      summary: Get feed in JSON format
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - description: 'Page number (default: 1)'
+        name: page
+        in: query
+        schema:
+          type: integer
+      - description: 'Items per page (default: 1000, max: 1000)'
+        name: page_size
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: JSON Feed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: getV2FeedByIdJson
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v2/feed/{id}/pause:
+    put:
+      security:
+      - ApiKeyAuth: []
+      description: Pauses an active feed to temporarily stop scheduled crawls
+      tags:
+      - Feeds
+      summary: Pause a feed
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Feed paused successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request or feed cannot be paused
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: putV2FeedByIdPause
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v2/feed/{id}/resume:
+    put:
+      security:
+      - ApiKeyAuth: []
+      description: Resumes a paused feed to restart scheduled crawls
+      tags:
+      - Feeds
+      summary: Resume a paused feed
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Feed resumed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request or feed cannot be resumed
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: putV2FeedByIdResume
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v2/feed/{id}/rss:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Returns the feed content in Atom 1.0 format with RFC 5005 pagination support
+      tags:
+      - Feeds
+      summary: Get feed in Atom/RSS format
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - description: 'Page number (default: 1)'
+        name: page
+        in: query
+        schema:
+          type: integer
+      - description: 'Items per page (default: 1000, max: 1000)'
+        name: page_size
+        in: query
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Atom XML feed
+          content:
+            text/xml:
+              schema:
+                type: string
+        '400':
+          description: Invalid request
+          content:
+            text/xml:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            text/xml:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: getV2FeedByIdRss
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v2/feed/{id}/run:
+    put:
+      security:
+      - ApiKeyAuth: []
+      description: Triggers an immediate feed run outside of the regular schedule. Rate limited to one run per hour.
+      tags:
+      - Feeds
+      summary: Force run a feed
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Feed run triggered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request or rate limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '402':
+          description: Insufficient balance
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: putV2FeedByIdRun
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v2/feed/{id}/webhook/resend:
+    post:
+      security:
+      - ApiKeyAuth: []
+      description: Resends the webhook notification for the latest completed feed run
+      tags:
+      - Feeds
+      summary: Resend feed webhook
+      parameters:
+      - description: Feed ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Webhook resent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '400':
+          description: Invalid request or no webhook configured
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Feed not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Failed to send webhook
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: postV2FeedByIdWebhookResend
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v2/feeds:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Retrieves all feeds for the authenticated organization
+      tags:
+      - Feeds
+      summary: List all feeds
+      responses:
+        '200':
+          description: List of feeds
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/FeedResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: getV2Feeds
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+components:
+  schemas:
+    FeedResponse:
+      type: object
+      properties:
+        created_at:
+          type: string
+        id:
+          type: string
+        include_errors:
+          type: boolean
+        interval_minutes:
+          type: integer
+        items_limit:
+          type: integer
+        last_run_at:
+          type: string
+        name:
+          type: string
+        next_run_at:
+          type: string
+        output_format:
+          type: string
+        recent_runs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeedRunResponse'
+        status:
+          type: string
+        tlsh_change_threshold:
+          type: integer
+        url:
+          type: string
+        webhook_url:
+          type: string
+    FeedRunResponse:
+      type: object
+      properties:
+        cost_usd:
+          type: number
+        finished_at:
+          type: string
+        id:
+          type: string
+        pages_changed:
+          type: integer
+        pages_crawled:
+          type: integer
+        pages_errors:
+          type: integer
+        pages_new:
+          type: integer
+        pages_unavailable:
+          type: integer
+        started_at:
+          type: string
+        status:
+          type: string
+    PostFeedRequest:
+      type: object
+      required:
+      - url
+      properties:
+        allow_subdomains:
+          type: boolean
+        blacklist_regexp:
+          type: string
+        include_errors:
+          type: boolean
+        items_limit:
+          type: integer
+        main_content_only:
+          type: boolean
+        max_depth:
+          type: integer
+        name:
+          type: string
+        output_format:
+          type: string
+        respect_robots_txt:
+          type: boolean
+        tlsh_change_threshold:
+          type: integer
+        url:
+          type: string
+        webhook_url:
+          type: string
+        whitelist_regexp:
+          type: string
+  securitySchemes:
+    ApiKeyAuth:
+      description: 'API key for authentication. Format: Bearer {api_key}'
+      type: apiKey
+      name: Authorization
+      in: header
+x-refined-from:
+- webcrawlerapi-com-swagger.json
+- webcrawlerapi-com-openapi.yml

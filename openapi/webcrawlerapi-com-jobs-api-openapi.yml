@@ -1,0 +1,497 @@
+openapi: 3.2.0
+info:
+  title: Webcrawlerapi Com Jobs API
+  version: '2.0'
+  contact:
+    name: API Support
+    url: https://webcrawlerapi.com/support
+    email: support@webcrawlerapi.com
+  license:
+    name: Commercial
+    url: https://webcrawlerapi.com/tos
+  termsOfService: https://webcrawlerapi.com/tos
+  description: 'Operations tagged Jobs across 2 of this provider''s published API definitions: webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+servers:
+- url: https://api.webcrawlerapi.com/
+- url: https://api.webcrawlerapi.com
+  description: Production
+tags:
+- name: Jobs
+paths:
+  /v1/crawl:
+    post:
+      security:
+      - ApiKeyAuth: []
+      description: Creates a new web crawling job with specified parameters. This endpoint crawls websites and extracts content based on configuration.
+      tags:
+      - Jobs
+      summary: Create a new crawl job
+      responses:
+        '200':
+          description: Job created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '402':
+          description: Insufficient balance
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '403':
+          description: Organization suspended or URL blocked
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostJobRequest'
+        description: Job parameters
+        required: true
+      operationId: postV1Crawl
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v1/job/{id}:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Retrieves the details and status of a specific job including all items
+      tags:
+      - Jobs
+      summary: Get job details
+      parameters:
+      - description: Job ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      - description: Include links found on pages
+        name: include_links
+        in: query
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Job details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrawlJobView'
+        '401':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: getV1JobById
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v1/job/{id}/cancel:
+    put:
+      security:
+      - ApiKeyAuth: []
+      description: Cancels a running or pending job
+      tags:
+      - Jobs
+      summary: Cancel a job
+      parameters:
+      - description: Job ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Job cancelled successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '401':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: putV1JobByIdCancel
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v1/job/{id}/markdown:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Downloads all successful markdown job items, combines them with separators, caches and serves as single file
+      tags:
+      - Jobs
+      summary: Get combined markdown for a job
+      parameters:
+      - description: Job ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Combined markdown content
+          content:
+            text/markdown:
+              schema:
+                type: string
+        '400':
+          description: Job is not a markdown type
+          content:
+            text/markdown:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '401':
+          description: Access denied
+          content:
+            text/markdown:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Job not found or no markdown content
+          content:
+            text/markdown:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '422':
+          description: Job not finished
+          content:
+            text/markdown:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Internal server error
+          content:
+            text/markdown:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: getV1JobByIdMarkdown
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v1/job/{id}/urls:
+    get:
+      security:
+      - ApiKeyAuth: []
+      description: Retrieves all URLs discovered by a crawl job with path clustering information
+      tags:
+      - Jobs
+      summary: Get job URLs
+      parameters:
+      - description: Job ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: URLs and clusters
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Access denied
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: getV1JobByIdUrls
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+  /v1/job/{id}/webhook/resend:
+    post:
+      security:
+      - ApiKeyAuth: []
+      description: Resends the webhook notification for a completed job
+      tags:
+      - Jobs
+      summary: Resend webhook
+      parameters:
+      - description: Job ID
+        name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Webhook resend status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookResendResponse'
+        '400':
+          description: Job has no webhook URL
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+      operationId: postV1JobByIdWebhookResend
+      x-operation-id-source: derived
+    servers:
+    - url: https://api.webcrawlerapi.com/
+components:
+  schemas:
+    CrawlJobView:
+      type: object
+      properties:
+        allow_subdomains:
+          type: boolean
+        blacklist_regexp:
+          type: string
+        created_at:
+          type: string
+        finished_at:
+          type: string
+        id:
+          type: string
+        items_limit:
+          type: integer
+        job_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CrawlJobItemView'
+        max_depth:
+          type: integer
+        org_id:
+          type: string
+        output_formats:
+          type: array
+          items:
+            type: string
+        recommended_pull_delay_ms:
+          type: integer
+        respect_robots_txt:
+          type: boolean
+        scrape_type:
+          type: string
+        status:
+          type: string
+        updated_at:
+          type: string
+        url:
+          type: string
+        webhook_url:
+          type: string
+        whitelist_regexp:
+          type: string
+    CrawlJobItemView:
+      type: object
+      properties:
+        cleaned_content_url:
+          type: string
+        cost:
+          type: number
+        created_at:
+          type: string
+        error:
+          type: string
+        error_code:
+          type: string
+        id:
+          type: string
+        job_id:
+          type: string
+        last_error:
+          type: string
+        links:
+          type: array
+          items:
+            type: string
+        markdown_content_url:
+          type: string
+        original_url:
+          type: string
+        page_status_code:
+          type: integer
+        raw_content_url:
+          type: string
+        referred_url:
+          type: string
+        status:
+          type: string
+        title:
+          type: string
+        updated_at:
+          type: string
+    PostJobRequest:
+      type: object
+      properties:
+        blacklist_regexp:
+          type: string
+          example: .*\/admin\/.*
+        items_limit:
+          type: integer
+          example: 10
+        keep_query_params:
+          type: boolean
+          example: false
+        main_content_only:
+          type: boolean
+          example: false
+        max_age:
+          type: integer
+          example: 604800
+        max_depth:
+          type: integer
+          example: 2
+        output_formats:
+          type: array
+          items:
+            type: string
+          example:
+          - '["markdown"'
+          - '"html"]'
+        respect_robots_txt:
+          type: boolean
+          example: false
+        scrape_type:
+          type: string
+          example: markdown
+        url:
+          type: string
+          example: https://example.com
+        webhook_url:
+          type: string
+          example: https://your-domain.com/webhook
+        whitelist_regexp:
+          type: string
+          example: .*\/blog\/.*
+    WebhookResendResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+        message:
+          type: string
+        status_code:
+          type: integer
+        success:
+          type: boolean
+        webhook_error:
+          type: string
+        webhook_url:
+          type: string
+  securitySchemes:
+    ApiKeyAuth:
+      description: 'API key for authentication. Format: Bearer {api_key}'
+      type: apiKey
+      name: Authorization
+      in: header
+x-refined-from:
+- webcrawlerapi-com-swagger.json
+- webcrawlerapi-com-openapi.yml
