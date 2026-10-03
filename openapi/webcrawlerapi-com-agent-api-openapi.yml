@@ -1,7 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Webcrawlerapi Com Agent API
-  version: '2.0'
+  description: WebCrawler API is a powerful web crawling and data extraction service designed for developers who need to transform websites into LLM-ready structured data and RAG (Retrieval-Augmented Generation) pipelines.
+  title: WebCrawler Agent API
+  termsOfService: https://webcrawlerapi.com/tos
   contact:
     name: API Support
     url: https://webcrawlerapi.com/support
@@ -9,10 +10,8 @@ info:
   license:
     name: Commercial
     url: https://webcrawlerapi.com/tos
-  termsOfService: https://webcrawlerapi.com/tos
-  description: 'Operations tagged Agent across 2 of this provider''s published API definitions: webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+  version: '2.0'
 servers:
-- url: https://api.webcrawlerapi.com/
 - url: https://api.webcrawlerapi.com
   description: Production
 tags:
@@ -26,6 +25,13 @@ paths:
       tags:
       - Agent
       summary: Run an agent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WagentRunRequest'
+        description: Agent request parameters
+        required: true
       responses:
         '200':
           description: Agent run
@@ -41,17 +47,8 @@ paths:
                 type: object
                 additionalProperties:
                   type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WagentRunRequest'
-        description: Agent request parameters
-        required: true
       operationId: postV1Agent
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v1/agent/job/{id}:
     get:
       security:
@@ -84,8 +81,6 @@ paths:
                   type: string
       operationId: getV1AgentJobById
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v1/agent/jobs:
     get:
       security:
@@ -114,31 +109,17 @@ paths:
                 $ref: '#/components/schemas/AgentRunList'
       operationId: getV1AgentJobs
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
 components:
   schemas:
-    WagentRunRequest:
+    AgentRunList:
       type: object
       properties:
-        max_age:
-          type: integer
-          example: 604800
-        max_spend_usd:
-          type: number
-        model:
-          type: string
-        output_schema:
-          type: object
-          additionalProperties: true
-        prompt:
-          type: string
-        seed_urls_only:
-          type: boolean
-        urls:
+        items:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/AgentRunView'
+        total:
+          type: integer
     AgentRunView:
       type: object
       properties:
@@ -168,21 +149,34 @@ components:
           type: array
           items:
             type: string
-    AgentRunList:
+    WagentRunRequest:
       type: object
       properties:
-        items:
+        max_age:
+          type: integer
+          example: 604800
+        max_spend_usd:
+          type: number
+        model:
+          type: string
+        output_schema:
+          type: object
+          additionalProperties: true
+        prompt:
+          type: string
+        seed_urls_only:
+          type: boolean
+        urls:
           type: array
           items:
-            $ref: '#/components/schemas/AgentRunView'
-        total:
-          type: integer
+            type: string
   securitySchemes:
     ApiKeyAuth:
       description: 'API key for authentication. Format: Bearer {api_key}'
       type: apiKey
       name: Authorization
       in: header
-x-refined-from:
-- webcrawlerapi-com-swagger.json
-- webcrawlerapi-com-openapi.yml
+x-original-source: https://api.webcrawlerapi.com/swagger/doc.json
+x-original-format: Swagger 2.0 (saved verbatim at openapi/_original/webcrawlerapi-com-swagger.json)
+x-converted: '2026-09-19'
+x-conversion-note: Mechanical Swagger 2.0 -> OpenAPI 3.0.3 rendition by API Evangelist. Paths, parameters, schemas, responses and security are the provider's own; nothing was added. The provider ships no operationIds or tag declarations - API Evangelist supplies those in overlays/webcrawlerapi-com-openapi-overlay.yaml.

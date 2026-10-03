@@ -1,7 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Webcrawlerapi Com V2 Scraping API
-  version: '2.0'
+  description: WebCrawler API is a powerful web crawling and data extraction service designed for developers who need to transform websites into LLM-ready structured data and RAG (Retrieval-Augmented Generation) pipelines.
+  title: WebCrawler V2 Scraping API
+  termsOfService: https://webcrawlerapi.com/tos
   contact:
     name: API Support
     url: https://webcrawlerapi.com/support
@@ -9,10 +10,8 @@ info:
   license:
     name: Commercial
     url: https://webcrawlerapi.com/tos
-  termsOfService: https://webcrawlerapi.com/tos
-  description: 'Operations tagged V2 Scraping across 2 of this provider''s published API definitions: webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+  version: '2.0'
 servers:
-- url: https://api.webcrawlerapi.com/
 - url: https://api.webcrawlerapi.com
   description: Production
 tags:
@@ -32,6 +31,13 @@ paths:
         in: query
         schema:
           type: boolean
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostScrapeRequestV2'
+        description: V2 Scrape parameters
+        required: true
       responses:
         '200':
           description: Job ID (async mode)
@@ -59,17 +65,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ScrapeResponseError'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PostScrapeRequestV2'
-        description: V2 Scrape parameters
-        required: true
       operationId: postV2Scrape
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v2/scrape/{id}:
     get:
       security:
@@ -106,8 +103,6 @@ paths:
                 $ref: '#/components/schemas/ScrapeResponseError'
       operationId: getV2ScrapeById
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
 components:
   schemas:
     PostScrapeResponseV2:
@@ -130,6 +125,17 @@ components:
         status:
           type: string
         structured_data: {}
+        success:
+          type: boolean
+    ScrapeResponseError:
+      type: object
+      properties:
+        error_code:
+          type: string
+        error_message:
+          type: string
+        status:
+          type: string
         success:
           type: boolean
     PostScrapeRequestV2:
@@ -166,23 +172,13 @@ components:
         url:
           type: string
           example: https://example.com
-    ScrapeResponseError:
-      type: object
-      properties:
-        error_code:
-          type: string
-        error_message:
-          type: string
-        status:
-          type: string
-        success:
-          type: boolean
   securitySchemes:
     ApiKeyAuth:
       description: 'API key for authentication. Format: Bearer {api_key}'
       type: apiKey
       name: Authorization
       in: header
-x-refined-from:
-- webcrawlerapi-com-swagger.json
-- webcrawlerapi-com-openapi.yml
+x-original-source: https://api.webcrawlerapi.com/swagger/doc.json
+x-original-format: Swagger 2.0 (saved verbatim at openapi/_original/webcrawlerapi-com-swagger.json)
+x-converted: '2026-09-19'
+x-conversion-note: Mechanical Swagger 2.0 -> OpenAPI 3.0.3 rendition by API Evangelist. Paths, parameters, schemas, responses and security are the provider's own; nothing was added. The provider ships no operationIds or tag declarations - API Evangelist supplies those in overlays/webcrawlerapi-com-openapi-overlay.yaml.

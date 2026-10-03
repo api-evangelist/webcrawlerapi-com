@@ -1,7 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Webcrawlerapi Com Feeds API
-  version: '2.0'
+  description: WebCrawler API is a powerful web crawling and data extraction service designed for developers who need to transform websites into LLM-ready structured data and RAG (Retrieval-Augmented Generation) pipelines.
+  title: WebCrawler Feeds API
+  termsOfService: https://webcrawlerapi.com/tos
   contact:
     name: API Support
     url: https://webcrawlerapi.com/support
@@ -9,10 +10,8 @@ info:
   license:
     name: Commercial
     url: https://webcrawlerapi.com/tos
-  termsOfService: https://webcrawlerapi.com/tos
-  description: 'Operations tagged Feeds across 2 of this provider''s published API definitions: webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+  version: '2.0'
 servers:
-- url: https://api.webcrawlerapi.com/
 - url: https://api.webcrawlerapi.com
   description: Production
 tags:
@@ -26,6 +25,13 @@ paths:
       tags:
       - Feeds
       summary: Create a new feed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFeedRequest'
+        description: Feed parameters
+        required: true
       responses:
         '200':
           description: Feed created successfully
@@ -58,17 +64,8 @@ paths:
                 type: object
                 additionalProperties:
                   type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PostFeedRequest'
-        description: Feed parameters
-        required: true
       operationId: postV2Feed
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v2/feed/{id}:
     get:
       security:
@@ -149,8 +146,6 @@ paths:
                   type: string
       operationId: deleteV2FeedById
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v2/feed/{id}/json:
     get:
       security:
@@ -202,8 +197,6 @@ paths:
                   type: string
       operationId: getV2FeedByIdJson
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v2/feed/{id}/pause:
     put:
       security:
@@ -245,8 +238,6 @@ paths:
                   type: string
       operationId: putV2FeedByIdPause
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v2/feed/{id}/resume:
     put:
       security:
@@ -288,8 +279,6 @@ paths:
                   type: string
       operationId: putV2FeedByIdResume
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v2/feed/{id}/rss:
     get:
       security:
@@ -340,8 +329,6 @@ paths:
                   type: string
       operationId: getV2FeedByIdRss
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v2/feed/{id}/run:
     put:
       security:
@@ -391,8 +378,6 @@ paths:
                   type: string
       operationId: putV2FeedByIdRun
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v2/feed/{id}/webhook/resend:
     post:
       security:
@@ -442,8 +427,6 @@ paths:
                   type: string
       operationId: postV2FeedByIdWebhookResend
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v2/feeds:
     get:
       security:
@@ -473,8 +456,6 @@ paths:
                   type: string
       operationId: getV2Feeds
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
 components:
   schemas:
     FeedResponse:
@@ -510,29 +491,6 @@ components:
           type: string
         webhook_url:
           type: string
-    FeedRunResponse:
-      type: object
-      properties:
-        cost_usd:
-          type: number
-        finished_at:
-          type: string
-        id:
-          type: string
-        pages_changed:
-          type: integer
-        pages_crawled:
-          type: integer
-        pages_errors:
-          type: integer
-        pages_new:
-          type: integer
-        pages_unavailable:
-          type: integer
-        started_at:
-          type: string
-        status:
-          type: string
     PostFeedRequest:
       type: object
       required:
@@ -564,12 +522,36 @@ components:
           type: string
         whitelist_regexp:
           type: string
+    FeedRunResponse:
+      type: object
+      properties:
+        cost_usd:
+          type: number
+        finished_at:
+          type: string
+        id:
+          type: string
+        pages_changed:
+          type: integer
+        pages_crawled:
+          type: integer
+        pages_errors:
+          type: integer
+        pages_new:
+          type: integer
+        pages_unavailable:
+          type: integer
+        started_at:
+          type: string
+        status:
+          type: string
   securitySchemes:
     ApiKeyAuth:
       description: 'API key for authentication. Format: Bearer {api_key}'
       type: apiKey
       name: Authorization
       in: header
-x-refined-from:
-- webcrawlerapi-com-swagger.json
-- webcrawlerapi-com-openapi.yml
+x-original-source: https://api.webcrawlerapi.com/swagger/doc.json
+x-original-format: Swagger 2.0 (saved verbatim at openapi/_original/webcrawlerapi-com-swagger.json)
+x-converted: '2026-09-19'
+x-conversion-note: Mechanical Swagger 2.0 -> OpenAPI 3.0.3 rendition by API Evangelist. Paths, parameters, schemas, responses and security are the provider's own; nothing was added. The provider ships no operationIds or tag declarations - API Evangelist supplies those in overlays/webcrawlerapi-com-openapi-overlay.yaml.

@@ -1,7 +1,8 @@
 openapi: 3.2.0
 info:
-  title: Webcrawlerapi Com Jobs API
-  version: '2.0'
+  description: WebCrawler API is a powerful web crawling and data extraction service designed for developers who need to transform websites into LLM-ready structured data and RAG (Retrieval-Augmented Generation) pipelines.
+  title: WebCrawler Jobs API
+  termsOfService: https://webcrawlerapi.com/tos
   contact:
     name: API Support
     url: https://webcrawlerapi.com/support
@@ -9,10 +10,8 @@ info:
   license:
     name: Commercial
     url: https://webcrawlerapi.com/tos
-  termsOfService: https://webcrawlerapi.com/tos
-  description: 'Operations tagged Jobs across 2 of this provider''s published API definitions: webcrawlerapi-com-swagger.json, webcrawlerapi-com-openapi.yml. Each path carries the servers of the definition it was published in.'
+  version: '2.0'
 servers:
-- url: https://api.webcrawlerapi.com/
 - url: https://api.webcrawlerapi.com
   description: Production
 tags:
@@ -26,6 +25,13 @@ paths:
       tags:
       - Jobs
       summary: Create a new crawl job
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostJobRequest'
+        description: Job parameters
+        required: true
       responses:
         '200':
           description: Job created successfully
@@ -59,17 +65,8 @@ paths:
                 type: object
                 additionalProperties:
                   type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PostJobRequest'
-        description: Job parameters
-        required: true
       operationId: postV1Crawl
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v1/job/{id}:
     get:
       security:
@@ -123,8 +120,6 @@ paths:
                   type: string
       operationId: getV1JobById
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v1/job/{id}/cancel:
     put:
       security:
@@ -175,8 +170,6 @@ paths:
                   type: string
       operationId: putV1JobByIdCancel
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v1/job/{id}/markdown:
     get:
       security:
@@ -241,8 +234,6 @@ paths:
                   type: string
       operationId: getV1JobByIdMarkdown
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v1/job/{id}/urls:
     get:
       security:
@@ -292,8 +283,6 @@ paths:
                   type: string
       operationId: getV1JobByIdUrls
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
   /v1/job/{id}/webhook/resend:
     post:
       security:
@@ -342,91 +331,22 @@ paths:
                   type: string
       operationId: postV1JobByIdWebhookResend
       x-operation-id-source: derived
-    servers:
-    - url: https://api.webcrawlerapi.com/
 components:
   schemas:
-    CrawlJobView:
+    WebhookResendResponse:
       type: object
       properties:
-        allow_subdomains:
-          type: boolean
-        blacklist_regexp:
-          type: string
-        created_at:
-          type: string
-        finished_at:
-          type: string
-        id:
-          type: string
-        items_limit:
-          type: integer
-        job_items:
-          type: array
-          items:
-            $ref: '#/components/schemas/CrawlJobItemView'
-        max_depth:
-          type: integer
-        org_id:
-          type: string
-        output_formats:
-          type: array
-          items:
-            type: string
-        recommended_pull_delay_ms:
-          type: integer
-        respect_robots_txt:
-          type: boolean
-        scrape_type:
-          type: string
-        status:
-          type: string
-        updated_at:
-          type: string
-        url:
-          type: string
-        webhook_url:
-          type: string
-        whitelist_regexp:
-          type: string
-    CrawlJobItemView:
-      type: object
-      properties:
-        cleaned_content_url:
-          type: string
-        cost:
-          type: number
-        created_at:
-          type: string
-        error:
-          type: string
-        error_code:
-          type: string
-        id:
-          type: string
         job_id:
           type: string
-        last_error:
+        message:
           type: string
-        links:
-          type: array
-          items:
-            type: string
-        markdown_content_url:
-          type: string
-        original_url:
-          type: string
-        page_status_code:
+        status_code:
           type: integer
-        raw_content_url:
+        success:
+          type: boolean
+        webhook_error:
           type: string
-        referred_url:
-          type: string
-        status:
-          type: string
-        title:
-          type: string
-        updated_at:
+        webhook_url:
           type: string
     PostJobRequest:
       type: object
@@ -471,20 +391,87 @@ components:
         whitelist_regexp:
           type: string
           example: .*\/blog\/.*
-    WebhookResendResponse:
+    CrawlJobItemView:
       type: object
       properties:
+        cleaned_content_url:
+          type: string
+        cost:
+          type: number
+        created_at:
+          type: string
+        error:
+          type: string
+        error_code:
+          type: string
+        id:
+          type: string
         job_id:
           type: string
-        message:
+        last_error:
           type: string
-        status_code:
+        links:
+          type: array
+          items:
+            type: string
+        markdown_content_url:
+          type: string
+        original_url:
+          type: string
+        page_status_code:
           type: integer
-        success:
+        raw_content_url:
+          type: string
+        referred_url:
+          type: string
+        status:
+          type: string
+        title:
+          type: string
+        updated_at:
+          type: string
+    CrawlJobView:
+      type: object
+      properties:
+        allow_subdomains:
           type: boolean
-        webhook_error:
+        blacklist_regexp:
+          type: string
+        created_at:
+          type: string
+        finished_at:
+          type: string
+        id:
+          type: string
+        items_limit:
+          type: integer
+        job_items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CrawlJobItemView'
+        max_depth:
+          type: integer
+        org_id:
+          type: string
+        output_formats:
+          type: array
+          items:
+            type: string
+        recommended_pull_delay_ms:
+          type: integer
+        respect_robots_txt:
+          type: boolean
+        scrape_type:
+          type: string
+        status:
+          type: string
+        updated_at:
+          type: string
+        url:
           type: string
         webhook_url:
+          type: string
+        whitelist_regexp:
           type: string
   securitySchemes:
     ApiKeyAuth:
@@ -492,6 +479,7 @@ components:
       type: apiKey
       name: Authorization
       in: header
-x-refined-from:
-- webcrawlerapi-com-swagger.json
-- webcrawlerapi-com-openapi.yml
+x-original-source: https://api.webcrawlerapi.com/swagger/doc.json
+x-original-format: Swagger 2.0 (saved verbatim at openapi/_original/webcrawlerapi-com-swagger.json)
+x-converted: '2026-09-19'
+x-conversion-note: Mechanical Swagger 2.0 -> OpenAPI 3.0.3 rendition by API Evangelist. Paths, parameters, schemas, responses and security are the provider's own; nothing was added. The provider ships no operationIds or tag declarations - API Evangelist supplies those in overlays/webcrawlerapi-com-openapi-overlay.yaml.
