@@ -333,21 +333,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    WebhookResendResponse:
-      type: object
-      properties:
-        job_id:
-          type: string
-        message:
-          type: string
-        status_code:
-          type: integer
-        success:
-          type: boolean
-        webhook_error:
-          type: string
-        webhook_url:
-          type: string
     PostJobRequest:
       type: object
       properties:
@@ -429,6 +414,21 @@ components:
         title:
           type: string
         updated_at:
+          type: string
+    WebhookResendResponse:
+      type: object
+      properties:
+        job_id:
+          type: string
+        message:
+          type: string
+        status_code:
+          type: integer
+        success:
+          type: boolean
+        webhook_error:
+          type: string
+        webhook_url:
           type: string
     CrawlJobView:
       type: object
