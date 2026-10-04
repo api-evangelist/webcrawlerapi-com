@@ -132,6 +132,8 @@ apis:
   humanURL: https://webcrawlerapi.com/docs/getting-started
   baseURL: https://api.webcrawlerapi.com
   tags:
+  - Agents
+  tags_raw:
   - Agent
   properties:
   - type: OpenAPI
@@ -163,6 +165,8 @@ apis:
   humanURL: https://webcrawlerapi.com/docs/getting-started
   baseURL: https://api.webcrawlerapi.com
   tags:
+  - Feed
+  tags_raw:
   - Feeds
   properties:
   - type: OpenAPI
@@ -194,6 +198,8 @@ apis:
   humanURL: https://webcrawlerapi.com/docs/getting-started
   baseURL: https://api.webcrawlerapi.com
   tags:
+  - Job
+  tags_raw:
   - Jobs
   properties:
   - type: OpenAPI
