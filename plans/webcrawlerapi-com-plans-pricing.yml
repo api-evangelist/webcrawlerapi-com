@@ -105,3 +105,35 @@ refund_policy:
   processing: within 7 business days
 note: The pricing page states included subscription credits exist but does not print the credit amount per tier;
   the docs pricing page prints only the per-page rate. Neither is invented here.
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - hybrid
+  - metered
+  units: []
+  plans:
+  - name: Pay as you go
+    access: other
+    model: metered
+    model_how: derived
+    units: []
+    periods: []
+  - name: Starter
+    access: other
+    model: hybrid
+    model_how: derived
+    units: []
+    periods: []
+  - name: Professional
+    access: other
+    model: hybrid
+    model_how: derived
+    units: []
+    periods: []
+  - name: Business
+    access: other
+    model: hybrid
+    model_how: derived
+    units: []
+    periods: []
