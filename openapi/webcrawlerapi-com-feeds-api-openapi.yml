@@ -458,38 +458,28 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    FeedResponse:
+    FeedRunResponse:
       type: object
       properties:
-        created_at:
+        cost_usd:
+          type: number
+        finished_at:
           type: string
         id:
           type: string
-        include_errors:
-          type: boolean
-        interval_minutes:
+        pages_changed:
           type: integer
-        items_limit:
+        pages_crawled:
           type: integer
-        last_run_at:
+        pages_errors:
+          type: integer
+        pages_new:
+          type: integer
+        pages_unavailable:
+          type: integer
+        started_at:
           type: string
-        name:
-          type: string
-        next_run_at:
-          type: string
-        output_format:
-          type: string
-        recent_runs:
-          type: array
-          items:
-            $ref: '#/components/schemas/FeedRunResponse'
         status:
-          type: string
-        tlsh_change_threshold:
-          type: integer
-        url:
-          type: string
-        webhook_url:
           type: string
     PostFeedRequest:
       type: object
@@ -522,28 +512,38 @@ components:
           type: string
         whitelist_regexp:
           type: string
-    FeedRunResponse:
+    FeedResponse:
       type: object
       properties:
-        cost_usd:
-          type: number
-        finished_at:
+        created_at:
           type: string
         id:
           type: string
-        pages_changed:
+        include_errors:
+          type: boolean
+        interval_minutes:
           type: integer
-        pages_crawled:
+        items_limit:
           type: integer
-        pages_errors:
-          type: integer
-        pages_new:
-          type: integer
-        pages_unavailable:
-          type: integer
-        started_at:
+        last_run_at:
           type: string
+        name:
+          type: string
+        next_run_at:
+          type: string
+        output_format:
+          type: string
+        recent_runs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeedRunResponse'
         status:
+          type: string
+        tlsh_change_threshold:
+          type: integer
+        url:
+          type: string
+        webhook_url:
           type: string
   securitySchemes:
     ApiKeyAuth:

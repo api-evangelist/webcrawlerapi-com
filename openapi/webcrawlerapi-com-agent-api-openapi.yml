@@ -111,36 +111,6 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    AgentRunList:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/AgentRunView'
-        total:
-          type: integer
-    WagentRunRequest:
-      type: object
-      properties:
-        max_age:
-          type: integer
-          example: 604800
-        max_spend_usd:
-          type: number
-        model:
-          type: string
-        output_schema:
-          type: object
-          additionalProperties: true
-        prompt:
-          type: string
-        seed_urls_only:
-          type: boolean
-        urls:
-          type: array
-          items:
-            type: string
     AgentRunView:
       type: object
       properties:
@@ -170,6 +140,36 @@ components:
           type: array
           items:
             type: string
+    WagentRunRequest:
+      type: object
+      properties:
+        max_age:
+          type: integer
+          example: 604800
+        max_spend_usd:
+          type: number
+        model:
+          type: string
+        output_schema:
+          type: object
+          additionalProperties: true
+        prompt:
+          type: string
+        seed_urls_only:
+          type: boolean
+        urls:
+          type: array
+          items:
+            type: string
+    AgentRunList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AgentRunView'
+        total:
+          type: integer
   securitySchemes:
     ApiKeyAuth:
       description: 'API key for authentication. Format: Bearer {api_key}'

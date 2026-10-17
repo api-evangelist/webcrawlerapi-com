@@ -333,49 +333,21 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
-    PostJobRequest:
+    WebhookResendResponse:
       type: object
       properties:
-        blacklist_regexp:
+        job_id:
           type: string
-          example: .*\/admin\/.*
-        items_limit:
-          type: integer
-          example: 10
-        keep_query_params:
-          type: boolean
-          example: false
-        main_content_only:
-          type: boolean
-          example: false
-        max_age:
-          type: integer
-          example: 604800
-        max_depth:
-          type: integer
-          example: 2
-        output_formats:
-          type: array
-          items:
-            type: string
-          example:
-          - '["markdown"'
-          - '"html"]'
-        respect_robots_txt:
-          type: boolean
-          example: false
-        scrape_type:
+        message:
           type: string
-          example: markdown
-        url:
+        status_code:
+          type: integer
+        success:
+          type: boolean
+        webhook_error:
           type: string
-          example: https://example.com
         webhook_url:
           type: string
-          example: https://your-domain.com/webhook
-        whitelist_regexp:
-          type: string
-          example: .*\/blog\/.*
     CrawlJobItemView:
       type: object
       properties:
@@ -414,21 +386,6 @@ components:
         title:
           type: string
         updated_at:
-          type: string
-    WebhookResendResponse:
-      type: object
-      properties:
-        job_id:
-          type: string
-        message:
-          type: string
-        status_code:
-          type: integer
-        success:
-          type: boolean
-        webhook_error:
-          type: string
-        webhook_url:
           type: string
     CrawlJobView:
       type: object
@@ -473,6 +430,49 @@ components:
           type: string
         whitelist_regexp:
           type: string
+    PostJobRequest:
+      type: object
+      properties:
+        blacklist_regexp:
+          type: string
+          example: .*\/admin\/.*
+        items_limit:
+          type: integer
+          example: 10
+        keep_query_params:
+          type: boolean
+          example: false
+        main_content_only:
+          type: boolean
+          example: false
+        max_age:
+          type: integer
+          example: 604800
+        max_depth:
+          type: integer
+          example: 2
+        output_formats:
+          type: array
+          items:
+            type: string
+          example:
+          - '["markdown"'
+          - '"html"]'
+        respect_robots_txt:
+          type: boolean
+          example: false
+        scrape_type:
+          type: string
+          example: markdown
+        url:
+          type: string
+          example: https://example.com
+        webhook_url:
+          type: string
+          example: https://your-domain.com/webhook
+        whitelist_regexp:
+          type: string
+          example: .*\/blog\/.*
   securitySchemes:
     ApiKeyAuth:
       description: 'API key for authentication. Format: Bearer {api_key}'
