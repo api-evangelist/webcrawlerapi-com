@@ -64,11 +64,135 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-WebCrawlerAPI (103 Labs, Netherlands) is a web crawling and scraping API that turns websites into clean, LLM-ready markdown for AI agents and RAG pipelines: asynchronous multi-page crawl jobs, single-page scraping with JSON-Schema structured outputs, scheduled change-detection Feeds (Atom 1.0 / JSON Feed 1.1 / webhooks), a prompt-driven crawling agent with a per-run spend cap, and organization usage endpoints.
+WebCrawlerAPI is a web crawling and scraping API from 103 Labs (Netherlands) that turns websites into clean, LLM-ready markdown, cleaned text, HTML or link lists for AI agents, support bots and RAG pipelines. It offers asynchronous multi-page crawl jobs (POST /v1/crawl with polling or webhooks), single-page scraping (POST /v2/scrape, sync or async, with prompt-based structured outputs validated against a JSON Schema), scheduled change-detection Feeds delivered as Atom 1.0, JSON Feed 1.1 or webhooks, a prompt-driven autonomous crawling agent with a required per-run spend cap, and organization usage/balance endpoints. Requests authenticate with a Bearer API key; usage is metered per successfully crawled page on a $0/month pay-as-you-go tier or $29/$99/$499 monthly plans, with 7-day caching (cache hits free). Published surfaces: a Swagger 2.0 document behind a live Swagger UI, an Agent API OpenAPI 3.0.3, an A2A agent card and RFC 9727 API catalog at /.well-known/, llms.txt, SDKs for JavaScript, Python, PHP, .NET and Java, an npm MCP server (local stdio), the webcr CLI, a Claude Code Agent Skill, a public Postman collection and a dated changelog.
 
-- Website: https://webcrawlerapi.com/
-- Docs: https://webcrawlerapi.com/docs/getting-started · Swagger UI: https://api.webcrawlerapi.com/swagger/index.html
-- Contract: `openapi/` (Swagger 2.0 from `api.webcrawlerapi.com/swagger/doc.json`, 24 operations, saved verbatim under `openapi/_original/`; Agent API OpenAPI 3.0.3 alongside it)
-- Agent surfaces: A2A agent card (`a2a/`, graded flavored), npm MCP server run locally over stdio (`mcp/`), provider-published Claude Code skill (`skills/`), `webcr` CLI (`cli/`), llms.txt (`llms/`), RFC 9727 API catalog (`well-known/`)
-- Profiled 2026-09-19 (local enrichment pass); source of the lead: a2a-registry.
+**Areas:** Web Scraping · Web Crawling · Data Extraction · Markdown · AI Agents · LLM · RAG · Web Feeds · Change Detection · Structured Data · MCP · A2A
 
+## WebCrawlerAPI on APIs.io
+
+Everything profiled for WebCrawlerAPI is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/webcrawlerapi-com/](https://apis.io/providers/webcrawlerapi-com/)** — or go straight to one of the APIs or properties below.
+
+### APIs (8)
+
+- [WebCrawlerAPI MCP Server](https://apis.io/apis/webcrawlerapi-com/webcrawlerapi-mcp-server/) — Official Model Context Protocol server distributed as the npm package webcrawler-mcp (npx -y webcrawler-mcp) and run locally over stdio - or self-hosted…
+- [WebCrawlerAPI Agent Card](https://apis.io/apis/webcrawlerapi-com/webcrawlerapi-a2a-agent-card/) — A2A-style agent card served from https://webcrawlerapi.com/.well-known/agent-card.json describing "WebCrawlerAPI Agent" (version 1.0.0) with three skills -…
+- [WebCrawlerAPI Agent API](https://apis.io/apis/webcrawlerapi-com/webcrawlerapi-com-agent-api/) — The Agent API from WebCrawlerAPI — 3 operation(s) for agent.
+- [WebCrawlerAPI Feeds API](https://apis.io/apis/webcrawlerapi-com/webcrawlerapi-com-feeds-api/) — The Feeds API from WebCrawlerAPI — 9 operation(s) for feeds.
+- [WebCrawlerAPI Jobs API](https://apis.io/apis/webcrawlerapi-com/webcrawlerapi-com-jobs-api/) — The Jobs API from WebCrawlerAPI — 6 operation(s) for jobs.
+- [WebCrawlerAPI Organization API](https://apis.io/apis/webcrawlerapi-com/webcrawlerapi-com-organization-api/) — The Organization API from WebCrawlerAPI — 1 operation(s) for organization.
+- [WebCrawlerAPI Status API](https://apis.io/apis/webcrawlerapi-com/webcrawlerapi-com-status-api/) — The Status API from WebCrawlerAPI — 2 operation(s) for status.
+- [WebCrawlerAPI V2 Scraping API](https://apis.io/apis/webcrawlerapi-com/webcrawlerapi-com-v2-scraping-api/) — The V2 Scraping API from WebCrawlerAPI — 2 operation(s) for v2 scraping.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Webcrawlerapi Com Webhooks](https://apis.io/asyncapis/webcrawlerapi-com/webcrawlerapi-com-webhooks/)
+
+#### MCP servers (2)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [webcrawler-mcp](https://apis.io/servers/webcrawlerapi-com/webcrawler-mcp/)
+- [webcrawler-mcp on npm (local stdio package)](https://apis.io/servers/webcrawlerapi-com/webcrawler-mcp-on-npm-local-stdio-package/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Webcrawlerapi Com Openapi Overlay](https://apis.io/overlays/webcrawlerapi-com/webcrawlerapi-com-openapi-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Webcrawlerapi Com Authentication](https://apis.io/security/webcrawlerapi-com/webcrawlerapi-com-authentication/)
+- [Webcrawlerapi Com Domain Security](https://apis.io/security/webcrawlerapi-com/webcrawlerapi-com-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Webcrawlerapi Com Plans Pricing](https://apis.io/plans/webcrawlerapi-com/webcrawlerapi-com-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Webcrawlerapi Com Rate Limits](https://apis.io/rate-limits/webcrawlerapi-com/webcrawlerapi-com-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://webcrawlerapi.com/)
+- [Documentation](https://webcrawlerapi.com/docs/getting-started)
+- [Getting started](https://webcrawlerapi.com/docs/getting-started)
+- [API reference](https://api.webcrawlerapi.com/swagger/index.html)
+- [Pricing](https://webcrawlerapi.com/docs/pricing)
+- [Sign up](https://dash.webcrawlerapi.com/sign-up)
+- [Changelog](https://webcrawlerapi.com/changelog)
+- [Blog](https://webcrawlerapi.com/blog)
+- [Terms of service](https://webcrawlerapi.com/tos)
+- [Privacy policy](https://webcrawlerapi.com/privacy)
+- [GitHub](https://github.com/WebCrawlerAPI)
+- [Status](https://status.webcrawlerapi.com)
+
+## API Evangelist rating
+
+**Kin Score 64.6** — strong · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 88.3 |
+| Contract quality | 57.2 |
+| Contract governance | 18.2 |
+| Operational transparency | 44.7 |
+| Developer ergonomics | 83.3 |
+| Access clarity | 76.3 |
+
+**Agent readiness 43.0** — agent-ready (gated down from agent-native)
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | documented (partial credit) |
+| MCP Server | documented (partial credit) |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | verified |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | yes |
+| Well Known Catalog | yes |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | paginated |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 30.0** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/webcrawlerapi-com/](https://apis.io/providers/webcrawlerapi-com/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for WebCrawlerAPI: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/webcrawlerapi-com/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
